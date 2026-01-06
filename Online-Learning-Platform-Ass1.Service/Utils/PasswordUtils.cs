@@ -1,0 +1,39 @@
+namespace Online_Learning_Platform_Ass1.Service.Utils;
+
+public static class PasswordUtils
+{
+    public static string HashPasswordAsync(string password)
+    {
+        if (password is null)
+            throw new ArgumentNullException(nameof(password), "Password cannot be null");
+
+        return string.IsNullOrWhiteSpace(password)
+            ? throw new ArgumentException("Password cannot be empty or whitespace", nameof(password))
+            : BCrypt.Net.BCrypt.HashPassword(password, 12);
+    }
+
+    public static bool VerifyPasswordAsync(string password, string hash)
+    {
+        if (password is null)
+            throw new ArgumentNullException(nameof(password), "Password cannot be null");
+
+        return hash is null
+            ? throw new ArgumentNullException(nameof(hash), "Hash cannot be null")
+            : BCrypt.Net.BCrypt.Verify(password, hash);
+    }
+
+    public static bool IsPasswordStrongAsync(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            return false;
+
+        const int minLength = 8;
+        const string specialChars = "!@#$%^&*";
+
+        return password.Length >= minLength &&
+               password.Any(char.IsUpper) &&
+               password.Any(char.IsLower) &&
+               password.Any(char.IsDigit) &&
+               password.Any(c => specialChars.Contains(c));
+    }
+}
