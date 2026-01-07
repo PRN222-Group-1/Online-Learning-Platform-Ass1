@@ -7,4 +7,5 @@ public interface IUserService
 {
     Task<ServiceResult<Guid>> RegisterAsync(UserRegisterDto dto);
     Task<ServiceResult<UserLoginResponseDto>> LoginAsync(UserLoginDto dto);
+    Task<IEnumerable<UserDto>> GetAllUsersAsync();
 }

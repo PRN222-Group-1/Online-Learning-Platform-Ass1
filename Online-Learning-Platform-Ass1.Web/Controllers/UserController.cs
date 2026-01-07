@@ -7,12 +7,12 @@ public class UserController(IUserService userService) : Controller
 {
     // GET: User/Login
     [HttpGet]
-    public IActionResult LoginAsync() => View();
+    public IActionResult Login() => View();
 
     // POST: User/Login
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> LoginAsync(UserLoginDto userLoginDto)
+    public async Task<IActionResult> Login(UserLoginDto userLoginDto)
     {
         if (!ModelState.IsValid) return View(userLoginDto);
 
@@ -21,7 +21,7 @@ public class UserController(IUserService userService) : Controller
         if (result.Success)
         {
             TempData["SuccessMessage"] = "Login successful!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(List));
         }
 
         ModelState.AddModelError(string.Empty, result.Message ?? "Login failed");
@@ -30,12 +30,12 @@ public class UserController(IUserService userService) : Controller
 
     // GET: User/Register
     [HttpGet]
-    public IActionResult RegisterAsync() => View();
+    public IActionResult Register() => View();
 
     // POST: User/Register
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RegisterAsync(UserRegisterDto userRegisterDto)
+    public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
     {
         if (!ModelState.IsValid) return View(userRegisterDto);
 
@@ -44,7 +44,7 @@ public class UserController(IUserService userService) : Controller
         if (result.Success)
         {
             TempData["SuccessMessage"] = "Registration successful! Please login.";
-            return RedirectToAction(nameof(LoginAsync));
+            return RedirectToAction(nameof(Login));
         }
 
         ModelState.AddModelError(string.Empty, result.Message ?? "Registration failed");
@@ -53,9 +53,18 @@ public class UserController(IUserService userService) : Controller
 
     // GET: User/Logout
     [HttpGet]
-    public IActionResult LogoutAsync()
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
+    public IActionResult Logout()
     {
         TempData["SuccessMessage"] = "You have been logged out";
         return RedirectToAction("Index", "Home");
+    }
+
+    // GET: User/List
+    [HttpGet]
+    public async Task<IActionResult> List()
+    {
+        var users = await userService.GetAllUsersAsync();
+        return View(users);
     }
 }
