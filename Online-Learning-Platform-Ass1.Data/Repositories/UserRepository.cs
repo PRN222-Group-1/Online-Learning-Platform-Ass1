@@ -8,14 +8,17 @@ public class UserRepository(OnlineLearningContext context) : IUserRepository
 {
     public async Task<User?> GetByUsernameAsync(string username) => await context.Users
         .AsNoTracking()
+        .Include(u => u.Role)
         .FirstOrDefaultAsync(u => u.Username == username);
 
     public async Task<User?> GetByEmailAsync(string email) => await context.Users
         .AsNoTracking()
+        .Include(u => u.Role)
         .FirstOrDefaultAsync(u => u.Email == email);
 
     public async Task<User?> GetByIdAsync(Guid id) => await context.Users
         .AsNoTracking()
+        .Include(u => u.Role)
         .FirstOrDefaultAsync(u => u.Id == id);
 
     public async Task AddAsync(User user) => await context.Users.AddAsync(user);
@@ -24,5 +27,6 @@ public class UserRepository(OnlineLearningContext context) : IUserRepository
 
     public async Task<IEnumerable<User>> GetAllAsync() => await context.Users
         .AsNoTracking()
+        .Include(u => u.Role)
         .ToListAsync();
 }
