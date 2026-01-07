@@ -21,19 +21,4 @@ public static class PasswordUtils
             ? throw new ArgumentNullException(nameof(hash), "Hash cannot be null")
             : BCrypt.Net.BCrypt.Verify(password, hash);
     }
-
-    public static bool IsPasswordStrongAsync(string password)
-    {
-        if (string.IsNullOrWhiteSpace(password))
-            return false;
-
-        const int minLength = 8;
-        const string specialChars = "!@#$%^&*";
-
-        return password.Length >= minLength &&
-               password.Any(char.IsUpper) &&
-               password.Any(char.IsLower) &&
-               password.Any(char.IsDigit) &&
-               password.Any(c => specialChars.Contains(c));
-    }
 }
