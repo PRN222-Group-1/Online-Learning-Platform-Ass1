@@ -8,5 +8,8 @@ public class User
     public string PasswordHash { get; set; } = null!;
     public DateTime CreateAt { get; set; }
 
+    public Guid? RoleId { get; set; }
+    public Role? Role { get; set; }
+
     public Profile? Profile { get; set; }
 }

@@ -20,6 +20,11 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.Email).IsUnique();
 
+        builder.HasOne(u => u.Role)
+            .WithMany(r => r.Users)
+            .HasForeignKey(u => u.RoleId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         builder.HasOne(u => u.Profile)
             .WithOne(p => p.User)
             .HasForeignKey<Profile>(p => p.UserId)
