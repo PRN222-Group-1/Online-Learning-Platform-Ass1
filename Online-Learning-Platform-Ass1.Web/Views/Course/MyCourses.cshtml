@@ -1,0 +1,52 @@
+@model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.Course.CourseViewModel>
+
+@{
+    ViewData["Title"] = "My Learning";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5">My Learning</h1>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">Browse More Courses</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var course in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                         @if (!string.IsNullOrEmpty(course.ImageUrl))
+                        {
+                            <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" style="height: 180px; object-fit: cover;">
+                        }
+                        else
+                        {
+                             <div class="bg-light text-secondary d-flex align-items-center justify-content-center" style="height: 180px;">
+                                <i class="bi bi-journal-album fs-1"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@course.Title</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">@course.CategoryName</h6>
+                            <p class="card-text text-truncate">@course.Description</p>
+                            <span class="badge bg-success">Enrolled</span>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-primary w-100">Continue Learning</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <h2 class="text-muted">You haven't enrolled in any courses yet.</h2>
+            <p class="lead">Start your learning journey today!</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-lg btn-primary mt-3">Browse Courses</a>
+        </div>
+    }
+</div>

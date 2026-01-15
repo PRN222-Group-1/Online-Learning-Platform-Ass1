@@ -1,0 +1,51 @@
+@model Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="display-5"><i class="bi bi-signpost-split"></i> @Model.Title</h1>
+            <p class="lead">@Model.Description</p>
+            
+            <h4 class="mt-4 mb-3">Courses Included in this Path</h4>
+            <div class="list-group">
+                @foreach (var course in Model.Courses)
+                {
+                    <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">@course.Title</h5>
+                            <small class="text-muted">@course.CategoryName</small>
+                        </div>
+                        <p class="mb-1 text-truncate">@course.Description</p>
+                        <small>Instructor: @course.InstructorName</small>
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+             <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="mb-0">Get Full Access</h5>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title text-center text-primary mb-3">@Model.Price.ToString("C")</h2>
+                    <p class="text-center text-muted">One-time payment for lifetime access to all @Model.Courses.Count() courses.</p>
+                    <div class="d-grid gap-2">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-action="Checkout" asp-route-id="@Model.Id" class="btn btn-success btn-lg">Buy Learning Path</a>
+                        }
+                        else
+                        {
+                             <a asp-controller="User" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })" class="btn btn-outline-primary btn-lg">Login to Enroll</a>
+                        }
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+</div>

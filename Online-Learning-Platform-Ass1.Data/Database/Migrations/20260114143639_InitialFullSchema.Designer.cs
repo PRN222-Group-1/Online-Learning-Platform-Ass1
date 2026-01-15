@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Learning_Platform_Ass1.Data.Database;
 
@@ -11,9 +12,11 @@ using Online_Learning_Platform_Ass1.Data.Database;
 namespace Online_Learning_Platform_Ass1.Data.Migrations
 {
     [DbContext(typeof(OnlineLearningContext))]
-    partial class OnlineLearningContextModelSnapshot : ModelSnapshot
+    [Migration("20260114143639_InitialFullSchema")]
+    partial class InitialFullSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,10 +138,6 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("image_url");
 
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uniqueidentifier")

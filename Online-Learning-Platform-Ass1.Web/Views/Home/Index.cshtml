@@ -1,8 +1,146 @@
-﻿@{
-  ViewData["Title"] = "Home Page";
+﻿@model Online_Learning_Platform_Ass1.Web.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-  <h1 class="display-4">Welcome</h1>
-  <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Categories</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a asp-action="Index" 
+                   class="list-group-item list-group-item-action @(Model.SelectedCategoryId == null ? "active" : "")">
+                   All Categories
+                </a>
+                @foreach (var cat in Model.Categories)
+                {
+                    <a asp-action="Index" 
+                       asp-route-categoryId="@cat.Id" 
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       class="list-group-item list-group-item-action @(Model.SelectedCategoryId == cat.Id ? "active" : "")">
+                        @cat.Name
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9">
+        <div class="text-center mb-5">
+            <h1 class="display-4">Welcome to Online Learning</h1>
+            <p>Explore our courses and comprehensive learning paths.</p>
+            
+            <!-- Search Bar -->
+            <form method="get" asp-action="Index" class="mt-4">
+                <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
+                <div class="input-group mb-3 w-75 mx-auto">
+                    <input type="text" class="form-control form-control-lg" placeholder="Search for courses..." 
+                           name="searchTerm" value="@Model.SearchTerm">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm) || Model.SelectedCategoryId.HasValue)
+                    {
+                         <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+                    }
+                </div>
+            </form>
+        </div>
+
+        <!-- Featured Courses Section -->
+        <h3 class="mb-4">
+            @if(!string.IsNullOrEmpty(Model.SearchTerm) || Model.SelectedCategoryId.HasValue)
+            {
+                <span>Result Courses</span>
+            }
+            else
+            {
+                <span>Featured Courses <small class="text-muted fs-6">Individual topics</small></span>
+            }
+        </h3>
+        <div class="row mb-5">
+    @if (Model.FeaturedCourses != null && Model.FeaturedCourses.Any())
+    {
+        @foreach (var course in Model.FeaturedCourses)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm border-0"> 
+                    @if (!string.IsNullOrEmpty(course.ImageUrl))
+                    {
+                        <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" style="height: 180px; object-fit: cover;">
+                    }
+                    else
+                    {
+                         <div class="bg-light text-secondary d-flex align-items-center justify-content-center" style="height: 180px;">
+                            <i class="bi bi-journal-album fs-1"></i>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">@course.Title</h5>
+                         <h6 class="card-subtitle mb-2 text-muted">@course.CategoryName</h6>
+                        <p class="card-text text-truncate">@course.Description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">@course.Price.ToString("C")</span>
+                            <small class="text-muted">@course.InstructorName</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p class="text-muted">No courses available.</p>
+        </div>
+    }
 </div>
+
+<!-- Featured Learning Paths Section -->
+<h3 class="mb-4">Learning Paths <small class="text-muted fs-6">Bundle & Save</small></h3>
+<div class="row">
+    @if (Model.FeaturedPaths != null && Model.FeaturedPaths.Any())
+    {
+        @foreach (var path in Model.FeaturedPaths)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="my-1"><i class="bi bi-signpost-split"></i> @path.Title</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@path.Description</p>
+                        <ul class="list-group list-group-flush mb-3">
+                            @foreach(var course in path.Courses.Take(3))
+                            {
+                                <li class="list-group-item bg-transparent py-1 border-0"><i class="bi bi-check2-circle text-success"></i> @course.Title</li>
+                            }
+                             @if(path.Courses.Count() > 3)
+                            {
+                                <li class="list-group-item bg-transparent py-1 border-0 fst-italic text-muted">...and @(path.Courses.Count() - 3) more</li>
+                            }
+                        </ul>
+                        <div class="d-flex justify-content-between align-items-center">
+                             <h4 class="text-primary mb-0">@path.Price.ToString("C")</h4>
+                             <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@path.Id" class="btn btn-primary">View Path</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center">
+            <p class="text-muted">No learning paths available.</p>
+        </div>
+    }
+</div>
+    </div> <!-- End Main Content Col -->
+</div> <!-- End Main Row -->
