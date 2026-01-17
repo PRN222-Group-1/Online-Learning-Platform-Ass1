@@ -1,5 +1,6 @@
 using Online_Learning_Platform_Ass1.Data.Models;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Online_Learning_Platform_Ass1.Data.Controllers;
 public class CourseController(ICourseService courseService, IModuleService moduleService, ILessonService lessonService) : Controller
@@ -50,5 +51,11 @@ public class CourseController(ICourseService courseService, IModuleService modul
         }
 
         return View(vm);
+    }
+
+    public async Task<IActionResult> List()
+    {
+        var courses = await _courseService.GetAllAsync();
+        return View(courses);
     }
 }

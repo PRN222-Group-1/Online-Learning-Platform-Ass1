@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Online_Learning_Platform_Ass1.Data.Database.Entities.Course>
+
+@{
+	ViewData["Title"] = "Danh sách khóa học";
+}
+
+<h2>Danh sách khóa học</h2>
+
+@if (!Model.Any())
+{
+	<p>Chưa có khóa học nào.</p>
+}
+else
+{
+	<ul>
+		@foreach (var course in Model)
+		{
+			<li>
+				<strong>@course.Title</strong>
+				<br />
+				<a href="@Url.Action("Learn", "Course",new { courseId = course.Id })">
+			Vào học
+		</a>
+	</li>
+		}
+	</ul>
+}
