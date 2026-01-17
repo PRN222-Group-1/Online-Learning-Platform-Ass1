@@ -1,0 +1,61 @@
+﻿
+@model CourseViewModel
+
+@{
+	ViewData["Title"] = "Lecture Details";
+}
+
+<div class="flex h-screen bg-gray-50">
+
+	@* Sidebar *@
+	<div class="w-80 bg-white border-r overflow-y-auto">
+		<div class="p-4 border-b">
+			
+		</div>
+
+		<div class="p-2">
+			
+		</div>
+	</div>
+
+	@* Main Content *@
+	<div class="flex-1 overflow-y-auto">
+
+		@* Video *@
+		<div class="bg-black aspect-video flex items-center justify-center text-white">
+			<div class="text-center">
+				<div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+					▶
+				</div>
+				<p class="text-lg font-medium">Setting Up Your Environment</p>
+				<p class="text-sm text-gray-400">10:15</p>
+			</div>
+		</div>
+
+		@* Tabs *@
+		<div class="bg-white border-b px-6 flex gap-8">
+			<button class="tab-btn py-4 border-b-2 border-blue-600" data-tab="overview">Overview</button>
+			<button class="tab-btn py-4 border-b-2 border-transparent" data-tab="resources">Resources</button>
+			<button class="tab-btn py-4 border-b-2 border-transparent" data-tab="discussion">Discussion</button>
+		</div>
+
+		<div class="p-6">
+
+			<div id="tab-overview">
+				<h1 class="text-2xl font-bold mb-4">Setting Up Your Environment</h1>
+				<p class="text-gray-700">
+					This lesson helps you install .NET SDK and set up your IDE.
+				</p>
+			</div>
+
+			<div id="tab-resources" class="hidden">
+				
+			</div>
+
+			<div id="tab-discussion" class="hidden text-center text-gray-500">
+				No discussions yet.
+			</div>
+
+		</div>
+	</div>
+</div>

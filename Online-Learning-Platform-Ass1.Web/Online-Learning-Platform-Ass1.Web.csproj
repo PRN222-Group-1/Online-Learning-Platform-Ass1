@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Online-Learning-Platform-Ass1.Service\Online-Learning-Platform-Ass1.Service.csproj"/>
+        <ProjectReference Include="..\Online-Learning-Platform-Ass1.Service\Online-Learning-Platform-Ass1.Service.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.AspNetCore"/>
+        <PackageReference Include="FluentValidation.AspNetCore" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>

@@ -38,9 +38,14 @@ builder.Services.AddDbContext<OnlineLearningContext>(options =>
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IModuleRepository, ModuleRepository>();
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 
 // Add services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IModuleService, ModuleService>();
+builder.Services.AddScoped<ILessonService, LessonService>();
 
 var app = builder.Build();
 
@@ -62,7 +67,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
         "default",
-        "{controller=Home}/{action=Index}/{id?}")
+        "{controller=Lecture}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 
