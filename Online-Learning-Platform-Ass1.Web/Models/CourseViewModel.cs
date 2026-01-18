@@ -8,6 +8,7 @@ public class CourseViewModel
 
     // bên trái: bài đang xem
     public int? CurrentLessonId { get; set; }
+    public LessonViewModel CurrentLesson { get; set; } = null!;
 
     //bên phải
     public List<ModuleViewModel> Modules { get; set; } = new();

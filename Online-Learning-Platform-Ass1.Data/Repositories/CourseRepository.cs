@@ -14,38 +14,27 @@ public class CourseRepository : ICourseRepository
 
     public CourseRepository()
     {
-        var course = new Course
+
+        _courses.Add(new Course
         {
             Id = _currentId++,
-            Title = "ASP.NET Core",
-            Description = "MVC từ A đến Z",
-            Modules = new List<CourseModule>()
-        };
-
-        var module1 = new CourseModule
-        {
-            Id = 1,
-            Title = "Giới thiệu",
-            CourseId = course.Id,
-            Lessons = new List<Lesson>()
-        };
-
-        module1.Lessons.Add(new Lesson
-        {
-            Id = 1,
-            Title = "MVC là gì?",
-            ModuleId = module1.Id
+            Author = "Nguyễn Văn A",
+            Title = "Lập trình ASP.NET Core từ A đến Z",
+            Description = "Khóa học toàn diện về ASP.NET Core, bao gồm MVC, Web API, Entity Framework Core, và nhiều hơn nữa.",
+            PictureUrl = "https://online-learning-platform.sfo3.cdn.digitaloceanspaces.com/course1.jpg",
+            CreatedAt = DateTime.UtcNow
         });
 
-        module1.Lessons.Add(new Lesson
+        _courses.Add(new Course
         {
-            Id = 2,
-            Title = "Cấu trúc project",
-            ModuleId = module1.Id
+            Id = _currentId++,
+            Author = "Trần Thị B",
+            Title = "Xây dựng ứng dụng web với Blazor",
+            Description = "Học cách xây dựng ứng dụng web tương tác sử dụng Blazor Server và Blazor WebAssembly.",
+            PictureUrl = "https://online-learning-platform.sfo3.cdn.digitaloceanspaces.com/course2.jpg",
+            CreatedAt = DateTime.UtcNow
         });
 
-        course.Modules.Add(module1);
-        _courses.Add(course);
     }
 
 

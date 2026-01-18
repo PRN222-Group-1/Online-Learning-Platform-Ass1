@@ -1,67 +1,75 @@
 ﻿@model CourseViewModel
 
 @{
-    ViewData["Title"] = Model.Title;
+	ViewData["Title"] = Model.Title;
 }
 
 <div class="container-fluid">
-    <div class="row">
+	<div class="row">
 
-        <!-- LEFT: Lesson content -->
-        <div class="col-md-8 border-end" style="min-height: 100vh;">
-            <h2>@Model.Title</h2>
+		<div class="col-md-8 border-end" style="min-height: 100vh;">
+			<h3 class="mt-3">@Model.Title</h3>
 
-            @if (Model.CurrentLessonId == null)
-            {
-                <p class="text-muted">
-                    Chọn một bài học ở bên phải để bắt đầu.
-                </p>
-            }
-            else
-            {
-                <div class="lesson-content mt-4">
-                    <p>
-                        Nội dung lesson đang được hiển thị ở đây.
-                    </p>
+			@if (Model.CurrentLesson == null)
+			{
+				<p class="text-muted mt-4">
+					Chọn một bài học ở bên phải để bắt đầu.
+				</p>
+			}
+			else
+			{
+				<div class="lesson-content mt-4">
 
-                    <div class="alert alert-secondary">
-                        Lesson ID: @Model.CurrentLessonId
-                    </div>
-                </div>
-            }
-        </div>
+					@if (!string.IsNullOrEmpty(Model.CurrentLesson.VideoUrl))
+					{
+						<div class="mb-4">
+							<video controls width="100%">
+								<source src="@Model.CurrentLesson.VideoUrl" type="video/mp4" />
+							</video>
+						</div>
+					}
 
-        <!-- RIGHT: Module & Lesson list -->
-        <div class="col-md-4 bg-light" style="min-height: 100vh;">
-            <h4 class="mt-3">Nội dung khóa học</h4>
+					<h4>@Model.CurrentLesson.Title</h4>
 
-            @foreach (var module in Model.Modules)
-            {
-                <div class="module mt-3">
-                    <strong>@module.Title</strong>
+					<div class="mt-3">
+						@Html.Raw(Model.CurrentLesson.Content)
+					</div>
 
-                    <ul class="list-group list-group-flush mt-2">
-                        @foreach (var lesson in module.Lessons)
-                        {
-                            <li class="list-group-item 
-                                @(lesson.IsCurrent ? "active" : "")">
-                                <a class="text-decoration-none 
-                                   @(lesson.IsCurrent ? "text-white" : "")"
-                                   href="@Url.Action(
-                                        "Learn",
-                                        "Course",
-                                        new {
-                                            courseId = Model.CourseId,
-                                            lessonId = lesson.LessonId
-                                        })">
-                                    @lesson.Title
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            }
-        </div>
+					<div class="text-muted mt-4">
+						Thời lượng: @Model.CurrentLesson.Duration phút
+					</div>
+				</div>
+			}
+		</div>
 
-    </div>
+		<div class="col-md-4 bg-light" style="min-height: 100vh;">
+			<h5 class="mt-3">Nội dung khóa học</h5>
+
+			@foreach (var module in Model.Modules)
+			{
+				<div class="mt-3">
+					<strong>@module.Title</strong>
+
+					<ul class="list-group list-group-flush mt-2">
+						@foreach (var lesson in module.Lessons)
+						{
+							<li class="list-group-item @(lesson.IsCurrent ? "active" : "")">
+								<a class="text-decoration-none @(lesson.IsCurrent ? "text-white" : "")"
+								   href="@Url.Action(
+									   "Learn",
+									   "Course",
+									   new {
+										   courseId = Model.CourseId,
+										   lessonId = lesson.LessonId
+									   })">
+									@lesson.Title
+								</a>
+							</li>
+						}
+					</ul>
+				</div>
+			}
+		</div>
+
+	</div>
 </div>

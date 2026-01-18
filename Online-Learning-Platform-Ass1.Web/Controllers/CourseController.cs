@@ -10,12 +10,12 @@ public class CourseController(ICourseService courseService, IModuleService modul
     private readonly ILessonService _lessonService = lessonService;
 
     // ví dụ như /Course/Learn/5?lessonId=1
-    public async Task<IActionResult> Learn(int id, int? lessonId)
+    public async Task<IActionResult> Learn(int courseId, int? lessonId)
     {
-        var course = await _courseService.GetByIdAsync(id);
+        var course = await _courseService.GetByIdAsync(courseId);
         if (course == null) return NotFound();
 
-        var modules = await _moduleService.GetByCourseIdAsync(id);
+        var modules = await _moduleService.GetByCourseIdAsync(courseId);
 
         var vm = new CourseViewModel
         {
