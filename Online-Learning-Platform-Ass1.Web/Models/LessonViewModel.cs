@@ -1,4 +1,13 @@
-namespace Online_Learning_Platform_Ass1.Data.Models;
+
+namespace Online_Learning_Platform_Ass1.Web.Models;
+
+public enum AiSummaryStatus
+{
+    None = 0,
+    Processing = 1,
+    Done = 2,
+    Failed = 3
+}
 
 public class LessonViewModel
 {
@@ -7,6 +16,10 @@ public class LessonViewModel
     public string Content { get; set; } = string.Empty;
 
     public string VideoUrl { get; set; } = string.Empty;
+
+    public string? Transcript { get; set; }
+    public string? AiSummary { get; set; }
+    public AiSummaryStatus AiSummaryStatus { get; set; } = AiSummaryStatus.None;
 
     public int Duration { get; set; }
     public int OrderIndex { get; set; }

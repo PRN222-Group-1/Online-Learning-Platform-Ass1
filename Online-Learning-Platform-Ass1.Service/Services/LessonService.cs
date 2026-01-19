@@ -1,7 +1,6 @@
 using Online_Learning_Platform_Ass1.Data.Database.Entities;
 using Online_Learning_Platform_Ass1.Data.Repositories;
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
-using Online_Learning_Platform_Ass1.Service.DTOs.Lesson;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;

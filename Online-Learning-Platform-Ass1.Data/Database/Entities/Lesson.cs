@@ -5,8 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Online_Learning_Platform_Ass1.Data.Database.Entities;
+
+public enum AiSummaryStatus
+{
+    None = 0,
+    Processing = 1,
+    Done = 2,      
+    Failed = 3
+}
+
 public class Lesson
 {
+
     public int Id { get; set; }
     public int ModuleId { get; set; }
     public string Title { get; set; } = string.Empty;
@@ -16,6 +26,7 @@ public class Lesson
 
     public string? Transcript { get; set; }
     public string? AiSummary { get; set; }
+    public AiSummaryStatus AiSummaryStatus { get; set; } = AiSummaryStatus.None;
 
     public int Duration { get; set; }
     public int OrderIndex { get; set; }

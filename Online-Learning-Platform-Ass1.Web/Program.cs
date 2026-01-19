@@ -51,6 +51,11 @@ builder.Services.AddScoped<ILessonService, LessonService>();
 // Add HttpClient services
 builder.Services.AddHttpClient<IAiLessonService, AiLessonService>();
 builder.Services.AddHttpClient<ITranscriptService, TranscriptService>();
+builder.Services.AddHttpClient<ITranscriptService, TranscriptService>(client =>
+{
+    client.Timeout = TimeSpan.FromMinutes(10);
+});
+
 
 
 var app = builder.Build();

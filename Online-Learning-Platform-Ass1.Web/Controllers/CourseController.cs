@@ -1,18 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform_Ass1.Data.Database.Entities;
-using Online_Learning_Platform_Ass1.Data.Models;
+using Online_Learning_Platform_Ass1.Web.Models;
 using Online_Learning_Platform_Ass1.Service.Services;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Web.Controllers;
-public class CourseController(ICourseService courseService, IModuleService moduleService, ILessonService lessonService, IAiLessonService aiLessonService,
-    ITranscriptService transcriptService) : Controller
+public class CourseController(ICourseService courseService, IModuleService moduleService, ILessonService lessonService, IAiLessonService aiLessonService) : Controller
 {
     private readonly ICourseService _courseService = courseService;
     private readonly IModuleService _moduleService = moduleService;
     private readonly ILessonService _lessonService = lessonService;
     private readonly IAiLessonService _aiLessonService = aiLessonService;
-    private readonly ITranscriptService _transcriptService = transcriptService;
 
     // ví dụ như /Course/Learn/5?lessonId=1
     public async Task<IActionResult> Learn(int courseId, int? lessonId)
@@ -88,11 +86,18 @@ public class CourseController(ICourseService courseService, IModuleService modul
     public async Task<IActionResult> AiSummary(int lessonId)
     {
         var lesson = await _lessonService.GetByIdAsync(lessonId);
-        if (lesson == null || string.IsNullOrEmpty(lesson.Content))
-            return BadRequest();
+        if (lesson == null) return NotFound();
 
-        var summary = await _aiLessonService.GenerateSummaryAsync(lesson.Content, lesson.VideoUrl);
-        return Ok(summary);
+        if (lesson.AiSummaryStatus == Data.Database.Entities.AiSummaryStatus.Processing)
+            return Ok(new { status = "processing" });
+
+        var summary = await _aiLessonService.GenerateSummaryAsync(lesson);
+
+        return Ok(new
+        {
+            status = lesson.AiSummaryStatus.ToString().ToLower(),
+            summary
+        });
     }
 
     [HttpPost]
@@ -102,7 +107,7 @@ public class CourseController(ICourseService courseService, IModuleService modul
         if (lesson == null || string.IsNullOrEmpty(lesson.Content))
             return BadRequest();
 
-        var answer = await _aiLessonService.AskAsync(lesson.Content, question);
+        var answer = await _aiLessonService.AskAsync(lesson, question);
         return Ok(answer);
     }
 }
