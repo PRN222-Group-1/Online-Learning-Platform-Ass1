@@ -10,7 +10,9 @@ public class LessonProgress
     public int Id { get; set; }
     public int EnrollmentId { get; set; }
     public int LessonId { get; set; }
+
+    public int WatchedPosition { get; set; }
     public bool IsCompleted { get; set; }
 
-    public int LastWatchedPosition { get; set; } = 0;
-    }
+    public DateTime UpdatedAt { get; set; }
+}

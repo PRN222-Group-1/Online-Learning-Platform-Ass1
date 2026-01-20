@@ -1,5 +1,5 @@
 
-namespace Online_Learning_Platform_Ass1.Web.Models;
+namespace Online_Learning_Platform_Ass1.Data.Models;
 
 public enum AiSummaryStatus
 {

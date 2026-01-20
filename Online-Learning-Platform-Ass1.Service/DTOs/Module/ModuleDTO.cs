@@ -1,8 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Online_Learning_Platform_Ass1.Service.DTOs.Module;
-public record ModuleDTO (int Id, int CourseId, string Title, int OrderIndex, DateTime CreateAt);
+
+public class ModuleDTO
+{
+    public int Id { get; set; }
+    public int CourseId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public int OrderIndex { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

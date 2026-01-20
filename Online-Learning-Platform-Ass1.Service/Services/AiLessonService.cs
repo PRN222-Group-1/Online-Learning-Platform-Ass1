@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Online_Learning_Platform_Ass1.Data.Database.Entities;
+using Online_Learning_Platform_Ass1.Service.DTOs.Lesson;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;
@@ -15,13 +16,13 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
     private const string _aiEndpoint = "https://api.groq.com/openai/v1/chat/completions";
     private const string _groqApiKey = "";
 
-    public async Task<string> GenerateSummaryAsync(Lesson lesson)
+    public async Task<string> GenerateSummaryAsync(LessonDTO lesson)
     {
         if (lesson.AiSummaryStatus == AiSummaryStatus.Done)
             return lesson.AiSummary!;
 
         if (lesson.AiSummaryStatus == AiSummaryStatus.Processing)
-            return "Đang tạo tóm tắt, vui lòng đợi xíu...";
+            return "Đợi xíu, AI đang tóm tắt bài này...";
 
         lesson.AiSummaryStatus = AiSummaryStatus.Processing;
         await _lessonService.UpdateAsync(lesson);
@@ -45,21 +46,19 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
         }
     }
 
-    public async Task<string> AskAsync(Lesson lesson, string question)
+    public async Task<string> AskAsync(LessonDTO lesson, string question)
     {
-        if (!string.IsNullOrWhiteSpace(lesson.AiSummary))
-        {
-            return await CallAiAsk(lesson.AiSummary, question);
-        }
+        var context = !string.IsNullOrWhiteSpace(lesson.AiSummary)
+            ? lesson.AiSummary!
+            : await EnsureTranscriptAsync(lesson);
 
-        var transcript = await EnsureTranscriptAsync(lesson);
-
-        return await CallAiAsk(transcript, question);
+        return await CallAiAsk(context, question);
     }
-    private async Task<string> EnsureTranscriptAsync(Lesson lesson)
+
+    private async Task<string> EnsureTranscriptAsync(LessonDTO lesson)
     {
         if (!string.IsNullOrWhiteSpace(lesson.Transcript))
-            return lesson.Transcript;
+            return lesson.Transcript!;
 
         var transcript =
             await _transcriptService.GenerateTranscriptFromVideoAsync(
@@ -71,7 +70,8 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
 
         return transcript;
     }
-    private async Task<string> CallAiAsk(string summary, string question)
+
+    private async Task<string> CallAiAsk(string context, string question)
     {
         var payload = new
         {
@@ -82,14 +82,13 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
                 {
                     role = "system",
                     content =
-                        "You are a teacher. Answer ONLY using the summary, you can fix some content to match. " +
-                        "If the summary does not contain the answer, say you do not know."
+                        "You are a teacher. Answer ONLY using the provided content. " +
+                        "If the content does not contain the answer, say you do not know."
                 },
                 new
                 {
                     role = "user",
-                    content =
-                        $"Transcript:\n{summary}\n\nQuestion:\n{question}"
+                    content = $"Content:\n{context}\n\nQuestion:\n{question}"
                 }
             },
             temperature = 0.3
@@ -109,10 +108,10 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
                 {
                     role = "system",
                     content =
-                    "You are a Vietnamese teacher. " +
-                    "ONLY summarize the lesson using the provided transcript, because it is from a video so some may wrong, please adjust if possible. " +
-                    "Write in clear Vietnamese. " +
-                    "If the transcript is unclear or empty, respond exactly: 'Không thể tóm tắt vì nội dung không rõ ràng.'"
+                        "You are a Vietnamese teacher. " +
+                        "ONLY summarize the lesson using the provided transcript. " +
+                        "Write in clear Vietnamese. " +
+                        "If the transcript is unclear or empty, respond exactly: 'Không thể tóm tắt vì nội dung không rõ ràng.'"
                 },
                 new
                 {
@@ -126,7 +125,6 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
         return await SendToAi(payload);
     }
 
-    //Gui cho Ai
     private async Task<string> SendToAi(object payload)
     {
         var json = JsonSerializer.Serialize(payload);
@@ -135,8 +133,6 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
 
         _http.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", _groqApiKey);
-
-        _http.Timeout = TimeSpan.FromMinutes(2);
 
         var response = await _http.PostAsync(_aiEndpoint, content);
         response.EnsureSuccessStatusCode();

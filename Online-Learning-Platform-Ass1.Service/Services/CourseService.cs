@@ -1,38 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Online_Learning_Platform_Ass1.Data.Database.Entities;
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
+using Online_Learning_Platform_Ass1.Service.DTOs.Course;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;
 public class CourseService (ICourseRepository courseRepository) : ICourseService
 {
     private readonly ICourseRepository _courseRepository = courseRepository;
-    public async Task<IEnumerable<Course>> GetAllAsync()
+    public async Task<IEnumerable<CourseDTO>> GetAllAsync()
     {
-        return await _courseRepository.GetAllAsync();
+        var courses = await _courseRepository.GetAllAsync();
+
+        return courses.Select(c => new CourseDTO
+        {
+            Id = c.Id,
+            Title = c.Title,
+            Author = c.Author,
+            Description = c.Description,
+            PictureUrl = c.PictureUrl,
+            CreatedAt = c.CreatedAt
+        });
     }
 
-    public async Task<Course?> GetByIdAsync(int courseId)
+    public async Task<CourseDTO?> GetByIdAsync(int courseId)
     {
-        return await _courseRepository.GetByIdAsync(courseId);
+        var c = await _courseRepository.GetByIdAsync(courseId);
+        if (c == null) return null;
+
+        return new CourseDTO
+        {
+            Id = c.Id,
+            Title = c.Title,
+            Author = c.Author,
+            Description = c.Description,
+            PictureUrl = c.PictureUrl,
+            CreatedAt = c.CreatedAt
+        };
     }
 
-    public async Task AddAsync(Course course)
-    {
-        await _courseRepository.AddAsync(course);
-    }
-
-    public async Task UpdateAsync(Course course)
-    {
-        await _courseRepository.UpdateAsync(course);
-    }
-
-    public async Task DeleteAsync(int courseId)
-    {
-        await _courseRepository.DeleteAsync(courseId);
-    }
 }

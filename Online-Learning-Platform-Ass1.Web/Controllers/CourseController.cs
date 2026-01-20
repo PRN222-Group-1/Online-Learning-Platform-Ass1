@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using Online_Learning_Platform_Ass1.Data.Database.Entities;
-using Online_Learning_Platform_Ass1.Web.Models;
-using Online_Learning_Platform_Ass1.Service.Services;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
+using Online_Learning_Platform_Ass1.Data.Models;
 
 namespace Online_Learning_Platform_Ass1.Web.Controllers;
 public class CourseController(ICourseService courseService, IModuleService moduleService, ILessonService lessonService, IAiLessonService aiLessonService) : Controller
@@ -24,11 +21,12 @@ public class CourseController(ICourseService courseService, IModuleService modul
         {
             CourseId = course.Id,
             Title = course.Title,
+            Author = course.Author,
             Description = course.Description,
             CurrentLessonId = lessonId
         };
 
-        Lesson? currentLesson = null;
+        LessonDTO? currentLesson = null;
 
         if (lessonId.HasValue)
         {

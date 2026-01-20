@@ -1,10 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Online_Learning_Platform_Ass1.Data.Database.Entities;
 
-namespace Online_Learning_Platform_Ass1.Service.DTOs.Lesson;
-public record LessonDTO(int Id, int ModuleId, string Title, string Content, string VideoUrl, string Duration,
-    string? AiSummary, string? Transcript, AiSummaryStatus AiSummaryStatus, int OrderIndex, DateTime CreatedAt);
+public class LessonDTO
+{
+
+    public int Id { get; set; }
+    public int ModuleId { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public string VideoUrl { get; set; } = string.Empty;
+    public int Duration { get; set; }
+
+    public string? AiSummary { get; set; }
+    public string? Transcript { get; set; }
+    public AiSummaryStatus AiSummaryStatus { get; set; }
+
+    public int OrderIndex { get; set; }
+    public DateTime CreatedAt { get; set; }
+}

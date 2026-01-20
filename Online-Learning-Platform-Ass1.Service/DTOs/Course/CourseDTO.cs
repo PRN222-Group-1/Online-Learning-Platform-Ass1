@@ -1,8 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Online_Learning_Platform_Ass1.Service.DTOs.Course;
-public record class CourseDTO(int Id, string Title, string Description, string? ImageUrl, DateTime CreatedAt);
+
+public class CourseDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Author { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+
+    public string PictureUrl { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}

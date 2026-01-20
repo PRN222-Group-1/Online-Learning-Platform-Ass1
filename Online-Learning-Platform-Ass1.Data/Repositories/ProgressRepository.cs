@@ -53,7 +53,7 @@ public class ProgressRepository : IProgressRepository
         existing.EnrollmentId = progress.EnrollmentId;
         existing.LessonId = progress.LessonId;
         existing.IsCompleted = progress.IsCompleted;
-        existing.LastWatchedPosition = progress.LastWatchedPosition;
+        existing.WatchedPosition = progress.WatchedPosition;
 
         return Task.CompletedTask;
     }
@@ -85,7 +85,7 @@ public class ProgressRepository : IProgressRepository
                 Id = _currentId++,
                 EnrollmentId = enrollmentId,
                 LessonId = lessonId,
-                LastWatchedPosition = lastWatchedPosition,
+                WatchedPosition = lastWatchedPosition,
                 IsCompleted = false
             };
 
@@ -93,7 +93,7 @@ public class ProgressRepository : IProgressRepository
         }
         else
         {
-            progress.LastWatchedPosition = lastWatchedPosition;
+            progress.WatchedPosition = lastWatchedPosition;
         }
 
         return Task.CompletedTask;
