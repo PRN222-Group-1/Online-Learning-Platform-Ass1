@@ -29,7 +29,6 @@ public record CourseLearnViewModel : CourseViewModel
     public LessonViewModel? CurrentLesson { get; init; }
 }
 
-
 public record ModuleViewModel
 {
     public Guid Id { get; init; }
