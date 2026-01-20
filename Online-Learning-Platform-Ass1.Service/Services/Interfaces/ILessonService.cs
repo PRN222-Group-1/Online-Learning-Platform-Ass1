@@ -6,6 +6,4 @@ public interface ILessonService
     Task<IEnumerable<LessonDTO>> GetByModuleIdAsync(int moduleId);
 
     Task UpdateAsync(LessonDTO lesson);
-
-
 }
