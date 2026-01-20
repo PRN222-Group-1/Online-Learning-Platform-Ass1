@@ -14,7 +14,7 @@ public class AiLessonService(HttpClient httpClient, ITranscriptService transcrip
     private readonly ILessonService _lessonService = lessonService;
 
     private const string _aiEndpoint = "https://api.groq.com/openai/v1/chat/completions";
-    private const string _groqApiKey = "";
+    private string _groqApiKey = Environment.GetEnvironmentVariable("GroqAPIKey__Key") ?? "";
 
     public async Task<string> GenerateSummaryAsync(LessonDTO lesson)
     {
