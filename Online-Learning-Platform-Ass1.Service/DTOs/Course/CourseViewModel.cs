@@ -7,6 +7,7 @@ namespace Online_Learning_Platform_Ass1.Service.DTOs.Course;
 public record CourseViewModel
 {
     public Guid Id { get; init; }
+    public Guid? EnrollmentId { get; init; }
     public string Title { get; init; } = null!;
     public string? Description { get; init; }
     public decimal Price { get; init; }
@@ -24,9 +25,10 @@ public record CourseDetailViewModel : CourseViewModel
 
 public record CourseLearnViewModel : CourseViewModel
 {
+
     public IEnumerable<ModuleViewModel> Modules { get; init; } = new List<ModuleViewModel>();
 
-    public LessonViewModel? CurrentLesson { get; init; }
+    public LessonViewModel? CurrentLesson { get; set; }
 }
 
 public record ModuleViewModel
