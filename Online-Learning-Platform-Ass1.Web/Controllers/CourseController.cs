@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Online_Learning_Platform_Ass1.Service.DTOs.Course;
 using Online_Learning_Platform_Ass1.Service.DTOs.Order;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
@@ -70,4 +71,50 @@ public class CourseController(
         var courses = await courseService.GetEnrolledCoursesAsync(userId);
         return View(courses);
     }
+
+    public async Task<IActionResult> Learn(Guid enrollmentId, Guid? lessonId)
+    {
+        var enrollment = await courseService.GetCourseDetailsAsync(enrollmentId);
+        if (enrollment == null) return NotFound();
+
+        var modules = enrollment.Modules.ToList();
+
+        LessonViewModel? currentLesson = null;
+
+        if (lessonId.HasValue)
+        {
+            foreach (var module in modules)
+            {
+                var lesson = module.Lessons.FirstOrDefault(l => l.Id == lessonId.Value);
+                if (lesson != null)
+                {
+                    currentLesson = lesson;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            currentLesson = modules.FirstOrDefault()?.Lessons.FirstOrDefault();
+        }
+
+        foreach (var module in modules)
+        {
+            foreach (var lesson in module.Lessons)
+            {
+                lesson.IsCurrent = currentLesson != null && lesson.Id == currentLesson.Id;
+            }
+        }
+
+        var vm = new CourseLearnViewModel
+        {
+            Id = enrollment.Id,
+            Title = enrollment.Title,
+            Modules = modules,
+            CurrentLesson = currentLesson
+        };
+
+        return View(vm);
+    }
+
 }
