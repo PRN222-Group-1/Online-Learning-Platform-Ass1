@@ -112,10 +112,10 @@ public class CourseController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> AiSummary(Guid enrollmentId, Guid lessonId)
+    public async Task<IActionResult> AiSummary([FromBody] AiSummaryRequest req)
     {
         var result = await aiLessonService.GenerateSummaryAsync(
-            enrollmentId, lessonId
+            req.EnrollmentId, req.LessonId
         );
 
         return Ok(result);

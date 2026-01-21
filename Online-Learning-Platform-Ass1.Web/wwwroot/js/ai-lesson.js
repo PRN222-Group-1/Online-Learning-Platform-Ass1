@@ -1,9 +1,12 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
 
+  const root = document.getElementById("learn-root");
+  if (!root) return;
+
+  const enrollmentId = root.dataset.enrollmentId;
+
   const btnSummary = document.getElementById("btn-summary");
   const btnAsk = document.getElementById("btn-ask");
-
-  const enrollmentId = document.body.dataset.enrollmentId;
 
   if (btnSummary) {
     btnSummary.addEventListener("click", async () => {

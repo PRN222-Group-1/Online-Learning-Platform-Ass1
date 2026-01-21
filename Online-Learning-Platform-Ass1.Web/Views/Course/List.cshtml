@@ -27,8 +27,6 @@ else
 						<p class="card-text flex-grow-1">
 							@course.Description
 						</p>
-						<p class="text-danger">@course.EnrollmentId</p>
-
 						<a href="@Url.Action("Learn", "Course",new { enrollmentId = course.EnrollmentId})" 
 						   class="btn btn-primary mt-auto">
 							Vào học

@@ -1,16 +1,14 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Online_Learning_Platform_Ass1.Data.Database.Entities;
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
+using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
-public class AiLessonService(
-    HttpClient httpClient,
-    ITranscriptService transcriptService,
-    ILessonProgressRepository progressRepository,
-    ILessonRepository lessonRepository
-) : IAiLessonService
+public class AiLessonService(HttpClient httpClient, ITranscriptService transcriptService, ILessonProgressRepository progressRepository,
+    ILessonRepository lessonRepository,
+    IConfiguration configuration) : IAiLessonService
 {
     private readonly HttpClient _http = httpClient;
     private readonly ITranscriptService _transcriptService = transcriptService;
@@ -18,11 +16,15 @@ public class AiLessonService(
     private readonly ILessonRepository _lessonRepository = lessonRepository;
 
     private const string _aiEndpoint = "https://api.groq.com/openai/v1/chat/completions";
-    private readonly string _groqApiKey =
-        Environment.GetEnvironmentVariable("GroqAPIKey__Key") ?? "";
+    private readonly string _groqApiKey = configuration["GroqAPIKey:Key"] ?? "";
 
     public async Task<string> GenerateSummaryAsync(Guid enrollmentId, Guid lessonId)
     {
+        Console.WriteLine("Groq API Key: " + (_groqApiKey != "" ? "Loaded" : "Not Found"));
+
+        Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+
         var progress = await GetOrCreateProgress(enrollmentId, lessonId);
 
         if (progress.AiSummaryStatus == AiSummaryStatus.Completed)
@@ -65,12 +67,9 @@ public class AiLessonService(
         return await CallAiAsk(context, question);
     }
 
-    private async Task<LessonProgress> GetOrCreateProgress(
-        Guid enrollmentId,
-        Guid lessonId)
+    private async Task<LessonProgress> GetOrCreateProgress(Guid enrollmentId, Guid lessonId)
     {
-        var progress =
-            await _progressRepository.GetAsync(enrollmentId, lessonId);
+        var progress = await _progressRepository.GetAsync(enrollmentId, lessonId);
 
         if (progress != null) return progress;
 
@@ -176,8 +175,7 @@ public class AiLessonService(
         var response = await _http.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
-        using var doc =
-            JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
 
         return doc.RootElement
             .GetProperty("choices")[0]
