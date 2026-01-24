@@ -30,7 +30,7 @@ public class PaymentController(
             OrderId = order.OrderId,
             Amount = order.Amount,
             CreatedDate = DateTime.Now,
-            Description = $"Payment_for_order_{order.Id}",
+            Description = $"Payment_for_order_{order.OrderId}",
             FullName = (User.Identity?.Name ?? "Guest").Replace(" ", "_")
         };
         

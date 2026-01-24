@@ -41,10 +41,10 @@ public class VnPayService : IVnPayService
         vnpay.AddRequestData("vnp_CurrCode", "VND");
         vnpay.AddRequestData("vnp_IpAddr", ipAddress);
         vnpay.AddRequestData("vnp_Locale", "vn");
-        vnpay.AddRequestData("vnp_OrderInfo", "Payment for order");
+        vnpay.AddRequestData("vnp_OrderInfo", $"Payment for order {model.OrderId}");
         vnpay.AddRequestData("vnp_OrderType", "other");
         vnpay.AddRequestData("vnp_ReturnUrl", vnp_ReturnUrl);
-        vnpay.AddRequestData("vnp_TxnRef", DateTime.Now.Ticks.ToString()); 
+        vnpay.AddRequestData("vnp_TxnRef", model.OrderId.ToString()); 
 
         string paymentUrl = vnpay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
         
