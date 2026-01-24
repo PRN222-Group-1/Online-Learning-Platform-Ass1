@@ -1,0 +1,76 @@
+@model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.Blog.BlogReadDto>
+
+@{
+    ViewData["Title"] = "Blogs";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📚 All Blogs</h2>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div>
+                <a asp-action="MyBlogs" class="btn btn-outline-primary me-2">
+                    <i class="bi bi-person-circle"></i> My Blogs
+                </a>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Blog
+                </a>
+            </div>
+        }
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> No published blogs yet. Be the first to create one!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var blog in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@blog.Title</h5>
+                            <p class="card-text text-muted">
+                                @(blog.Content.Length > 150 ? blog.Content.Substring(0, 150) + "..." : blog.Content)
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-person"></i> @blog.AuthorName
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar"></i> @blog.CreatedAt.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                            <a asp-action="Details" asp-route-id="@blog.Id" class="btn btn-sm btn-primary mt-2 w-100">
+                                Read More <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,114 @@
+/* Blog Styles */
+
+.blog-post {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.blog-post header h1 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.blog-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #34495e;
+    margin: 2rem 0;
+}
+
+.blog-content p {
+    margin-bottom: 1.5rem;
+}
+
+/* Blog Card Styles */
+.card.blog-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.card.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card.blog-card .card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.card.blog-card .card-text {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+}
+
+/* Blog Status Badges */
+.badge.bg-published {
+    background-color: #27ae60 !important;
+}
+
+.badge.bg-draft {
+    background-color: #f39c12 !important;
+}
+
+/* Blog Table Styles */
+.table-blog tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-blog tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Blog Form Styles */
+.blog-form textarea {
+    min-height: 300px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.blog-form .form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Blog Author Info */
+.blog-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.blog-author i {
+    color: #3498db;
+}
+
+/* Blog Date */
+.blog-date {
+    color: #95a5a6;
+    font-size: 0.85rem;
+}
+
+.blog-date i {
+    color: #e74c3c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-post {
+        padding: 1.5rem;
+    }
+    
+    .blog-content {
+        font-size: 1rem;
+    }
+}

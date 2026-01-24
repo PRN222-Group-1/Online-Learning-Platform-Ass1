@@ -68,7 +68,7 @@ public class OrderService(
         {
             OrderId = order.Id,
             CourseId = order.CourseId ?? Guid.Empty,
-            CourseTitle = order.Course?.Title ?? order.Path?.Title ?? "Unknown",
+            CourseTitle = order.Course?.Title ?? order.LearningPath?.Title ?? "Unknown",
             Amount = order.TotalAmount,
             Status = order.Status
         };
