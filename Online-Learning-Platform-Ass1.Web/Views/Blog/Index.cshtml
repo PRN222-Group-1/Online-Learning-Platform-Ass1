@@ -52,12 +52,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@blog.Title</h5>
                             <p class="card-text text-muted">
-                                @{
-                                    var preview = blog.Content.Length > 150 
-                                        ? blog.Content.Substring(0, 150) + "..." 
-                                        : blog.Content;
-                                }
-                                @preview
+                                @(blog.Content.Length > 150 ? blog.Content.Substring(0, 150) + "..." : blog.Content)
                             </p>
                         </div>
                         <div class="card-footer bg-transparent">

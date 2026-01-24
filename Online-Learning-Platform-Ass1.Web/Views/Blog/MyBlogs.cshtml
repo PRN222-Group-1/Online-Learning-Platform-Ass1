@@ -55,12 +55,7 @@
                                 <strong>@blog.Title</strong>
                                 <br/>
                                 <small class="text-muted">
-                                    @{
-                                        var preview = blog.Content.Length > 100 
-                                            ? blog.Content.Substring(0, 100) + "..." 
-                                            : blog.Content;
-                                    }
-                                    @preview
+                                    @(blog.Content.Length > 100 ? blog.Content.Substring(0, 100) + "..." : blog.Content)
                                 </small>
                             </td>
                             <td>
