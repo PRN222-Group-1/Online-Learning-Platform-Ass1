@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
 using Online_Learning_Platform_Ass1.Service.DTOs.Payment;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
-
+using VNPAY.Extensions;
 namespace Online_Learning_Platform_Ass1.Data.Controllers;
 
 [Authorize]
@@ -32,18 +32,29 @@ public class PaymentController(
             OrderId = order.Id,
             Amount = order.TotalAmount,
             CreatedDate = DateTime.Now,
-            Description = $"Payment for order {order.Id}",
-            FullName = User.Identity?.Name ?? "Guest"
+            Description = $"Payment_for_order_{order.Id}",
+            FullName = (User.Identity?.Name ?? "Guest").Replace(" ", "_")
         };
         
         // This generates the full URL to redirect to VNPay
-        var paymentUrl = vnPayService.CreatePaymentUrl(HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1", model);
+        var paymentUrl = vnPayService.CreatePaymentUrl("127.0.0.1", model);
         
         return Redirect(paymentUrl);
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> PaymentCallback()
     {
+        // Log raw query string from VNPay for debugging
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine($"VNPAY CALLBACK RAW QUERY STRING: {Request.QueryString.Value}");
+        Console.WriteLine($"ALL QUERY PARAMETERS:");
+        foreach (var param in Request.Query)
+        {
+            Console.WriteLine($"  {param.Key} = {param.Value}");
+        }
+        Console.WriteLine("------------------------------------------");
+        
         var queryDictionary = Request.Query.ToDictionary(q => q.Key, q => q.Value.ToString());
         var response = vnPayService.PaymentExecute(queryDictionary);
 

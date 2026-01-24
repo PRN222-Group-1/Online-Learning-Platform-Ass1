@@ -8,7 +8,8 @@ namespace Online_Learning_Platform_Ass1.Service.Services;
 public class OrderService(
     IOrderRepository orderRepository, 
     ICourseRepository courseRepository,
-    ILearningPathRepository learningPathRepository) : IOrderService
+    ILearningPathRepository learningPathRepository,
+    IEnrollmentRepository enrollmentRepository) : IOrderService
 {
     public async Task<OrderViewModel?> CreateOrderAsync(Guid userId, CreateOrderDto dto)
     {
@@ -17,6 +18,12 @@ public class OrderService(
 
         if (dto.CourseId.HasValue)
         {
+            // Check if already enrolled
+            if (await enrollmentRepository.IsEnrolledAsync(userId, dto.CourseId.Value))
+            {
+                return null; // Already enrolled
+            }
+
             var course = await courseRepository.GetByIdAsync(dto.CourseId.Value);
             if (course == null) return null;
             amount = course.Price;
@@ -26,6 +33,38 @@ public class OrderService(
         {
             var path = await learningPathRepository.GetByIdAsync(dto.PathId.Value);
             if (path == null) return null;
+
+            // Check if already enrolled in ALL courses of the path (meaning "Joined Path")
+            // Assuming PathCourses is loaded. If not, we might need to load it. 
+            // Based on existing ProcessPaymentAsync using path.PathCourses, we assume it is loaded or available.
+            // Check if user is enrolled in any course of the path? Or all?
+            // "Already joined path" -> Usually means enrolled in the path logic. 
+            // Since we don't have PathEnrollment table, we check if user owns all courses?
+            // Or typically, check if they own the first one?
+            // Let's check if they own ALL.
+            
+            bool alreadyOwnedAll = true;
+            if (path.PathCourses != null && path.PathCourses.Any())
+            {
+                foreach (var pc in path.PathCourses)
+                {
+                    if (!await enrollmentRepository.IsEnrolledAsync(userId, pc.CourseId))
+                    {
+                        alreadyOwnedAll = false;
+                        break;
+                    }
+                }
+            }
+            else 
+            {
+                 alreadyOwnedAll = false; // Empty path? Validation?
+            }
+
+            if (alreadyOwnedAll && path.PathCourses != null && path.PathCourses.Any())
+            {
+                return null; // Already enrolled in the path
+            }
+
             amount = path.Price;
             title = path.Title;
         }
@@ -86,7 +125,10 @@ public class OrderService(
             
             if (order.CourseId.HasValue)
             {
-                await CreateEnrollment(order.UserId, order.CourseId.Value);
+                if (!await enrollmentRepository.IsEnrolledAsync(order.UserId, order.CourseId.Value))
+                {
+                    await CreateEnrollment(order.UserId, order.CourseId.Value);
+                }
             }
             else if (order.PathId.HasValue)
             {
@@ -95,7 +137,10 @@ public class OrderService(
                 {
                     foreach (var pc in path.PathCourses)
                     {
-                         await CreateEnrollment(order.UserId, pc.CourseId);
+                         if (!await enrollmentRepository.IsEnrolledAsync(order.UserId, pc.CourseId))
+                         {
+                             await CreateEnrollment(order.UserId, pc.CourseId);
+                         }
                     }
                 }
             }

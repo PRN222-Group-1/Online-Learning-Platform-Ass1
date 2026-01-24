@@ -9,7 +9,6 @@ public class OrderRepository(OnlineLearningContext context) : IOrderRepository
     public async Task<Order?> GetByIdAsync(Guid id)
     {
         return await context.Orders
-            .Include(o => o.Course)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
 

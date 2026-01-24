@@ -37,16 +37,9 @@ public class LearningPathController(
         }
 
         var order = await orderService.CreateOrderAsync(userId, new CreateOrderDto { PathId = id });
-        if (order == null) return BadRequest("Could not create order.");
+        if (order == null) return BadRequest("Could not create order or you have already joined this path.");
 
-        var success = await orderService.ProcessPaymentAsync(order.OrderId);
-        if (success)
-        {
-            return RedirectToAction("Success", "Course", new { id = order.OrderId }); // Reuse Course Success page
-        }
-
-        ModelState.AddModelError("", "Payment failed.");
-        var path = await learningPathService.GetLearningPathDetailsAsync(id);
-        return View("Checkout", path);
+        // Redirect to VNPay
+        return RedirectToAction("CreatePaymentUrl", "Payment", new { orderId = order.OrderId });
     }
 }

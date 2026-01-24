@@ -7,7 +7,14 @@ using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 using Online_Learning_Platform_Ass1.Service.Validators.User;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+// ... (skip lines)
+
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
@@ -59,6 +66,7 @@ builder.Services.AddHttpClient<ITranscriptService, TranscriptService>(client =>
 {
     client.Timeout = TimeSpan.FromMinutes(10);
 });
+builder.Services.AddHttpClient<IChatbotService, ChatbotService>();
 
 var app = builder.Build();
 
