@@ -10,7 +10,8 @@ public class OrderService(
     IOrderRepository orderRepository, 
     ICourseRepository courseRepository,
     ILearningPathRepository learningPathRepository,
-    IEnrollmentRepository enrollmentRepository) : IOrderService
+    IEnrollmentRepository enrollmentRepository,
+    IUserLearningPathEnrollmentRepository userLearningPathEnrollmentRepository) : IOrderService
 {
     public async Task<OrderViewModel?> CreateOrderAsync(Guid userId, CreateOrderDto dto)
     {
@@ -233,13 +234,9 @@ public class OrderService(
             CourseId = order.CourseId ?? Guid.Empty,
             CourseTitle = order.Course?.Title ?? order.LearningPath?.Title ?? "Unknown",
             Amount = order.TotalAmount,
-            Status = order.Status
+            Status = order.Status,
+            ExpiresAt = order.ExpiresAt
         };
-    }
-
-    public async Task<Order?> GetOrderEntityByIdAsync(Guid orderId)
-    {
-        return await orderRepository.GetByIdAsync(orderId);
     }
 
     public async Task<bool> ProcessPaymentAsync(Guid orderId, string? transactionGateId = null)
@@ -306,6 +303,10 @@ public class OrderService(
                 var path = await learningPathRepository.GetByIdAsync(order.PathId.Value);
                 if (path != null)
                 {
+                    // Create UserLearningPathEnrollment
+                    await CreatePathEnrollment(order.UserId, order.PathId.Value);
+
+                    // Also enroll in all courses within the path
                     foreach (var pc in path.PathCourses)
                     {
                         if (!await enrollmentRepository.IsEnrolledAsync(order.UserId, pc.CourseId))
@@ -350,6 +351,18 @@ public class OrderService(
                 Status = "active"
             };
             await orderRepository.AddEnrollmentAsync(enrollment);
+    }
+
+    private async Task CreatePathEnrollment(Guid userId, Guid pathId)
+    {
+        var enrollment = new UserLearningPathEnrollment
+        {
+            UserId = userId,
+            PathId = pathId,
+            Status = "active",
+            ProgressPercentage = 0
+        };
+        await userLearningPathEnrollmentRepository.AddAsync(enrollment);
     }
 
     public async Task<IEnumerable<UserOrderDto>> GetUserOrdersAsync(Guid userId)

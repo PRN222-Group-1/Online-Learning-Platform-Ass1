@@ -5,18 +5,12 @@ using Online_Learning_Platform_Ass1.Service.DTOs.User;
 using Online_Learning_Platform_Ass1.Service.Services;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 using Online_Learning_Platform_Ass1.Service.Validators.User;
+using Online_Learning_Platform_Ass1.Web.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Globalization;
-using Online_Learning_Platform_Ass1.Service.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-
-// ... (skip lines)
-
-builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
@@ -49,6 +43,7 @@ builder.Services.AddDbContext<OnlineLearningContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ILearningPathRepository, LearningPathRepository>();
+builder.Services.AddScoped<IUserLearningPathEnrollmentRepository, UserLearningPathEnrollmentRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -61,6 +56,8 @@ builder.Services.AddScoped<IUserAssessmentRepository, UserAssessmentRepository>(
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ILearningPathService, LearningPathService>();
+builder.Services.AddScoped<ILearningPathEnrollmentService, LearningPathEnrollmentService>();
+builder.Services.AddScoped<ILearningPathProgressSyncService, LearningPathProgressSyncService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ILessonProgressService, LessonProgressService>();
@@ -77,11 +74,12 @@ builder.Services.AddHttpClient<IChatbotService, ChatbotService>();
 var cultureInfo = new CultureInfo("vi-VN");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
 // Add SignalR
 builder.Services.AddSignalR();
 
 // Add Background Services
-builder.Services.AddHostedService<OrderCleanupService>();
+builder.Services.AddHostedService<OrderCleanupService<OrderHub>>();
 
 var app = builder.Build();
 

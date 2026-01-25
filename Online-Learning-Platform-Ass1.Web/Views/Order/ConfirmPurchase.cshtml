@@ -38,7 +38,7 @@
                                     <strong>Original Price:</strong>
                                 </div>
                                 <div class="col-4 text-end">
-                                    @Model.OriginalPrice.ToString("N0") VND
+                                    @Model.OriginalPrice.ToString("C")
                                 </div>
                             </div>
 
@@ -49,7 +49,7 @@
                                     <ul class="mb-0">
                                         @foreach (var course in Model.OwnedCourses)
                                         {
-                                            <li>@course.Title - @course.Price.ToString("N0") VND</li>
+                                            <li>@course.Title - @course.Price.ToString("C")</li>
                                         }
                                     </ul>
                                 </div>
@@ -59,7 +59,7 @@
                                         <strong>Discount:</strong>
                                     </div>
                                     <div class="col-4 text-end">
-                                        -@Model.TotalDiscount.ToString("N0") VND
+                                        -@Model.TotalDiscount.ToString("C")
                                     </div>
                                 </div>
                             }
@@ -72,7 +72,7 @@
                                 </div>
                                 <div class="col-4 text-end">
                                     <h5 class="mb-0 text-primary">
-                                        <strong>@Model.FinalPrice.ToString("N0") VND</strong>
+                                        <strong>@Model.FinalPrice.ToString("C")</strong>
                                     </h5>
                                 </div>
                             </div>
@@ -81,7 +81,7 @@
                             {
                                 <div class="alert alert-success">
                                     <i class="bi bi-piggy-bank me-2"></i>
-                                    You save <strong>@Model.TotalDiscount.ToString("N0") VND</strong> 
+                                    You save <strong>@Model.TotalDiscount.ToString("C")</strong> 
                                     (@(((Model.TotalDiscount / Model.OriginalPrice) * 100).ToString("F0"))% discount)!
                                 </div>
                             }

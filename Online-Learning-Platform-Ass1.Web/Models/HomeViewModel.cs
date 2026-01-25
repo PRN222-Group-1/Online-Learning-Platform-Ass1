@@ -12,5 +12,6 @@ public class HomeViewModel
     // Search & Filter
     public string? SearchTerm { get; set; }
     public Guid? SelectedCategoryId { get; set; }
+    public bool ViewAll { get; set; } = false;
     public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
 }

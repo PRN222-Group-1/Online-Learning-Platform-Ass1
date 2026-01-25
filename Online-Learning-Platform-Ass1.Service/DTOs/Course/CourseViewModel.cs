@@ -14,7 +14,7 @@ public record CourseViewModel
     public string? ImageUrl { get; init; }
     public string InstructorName { get; init; } = null!;
     public string CategoryName { get; init; } = null!;
-
+    public int OrderIndex { get; init; }
 }
 
 public record CourseDetailViewModel : CourseViewModel

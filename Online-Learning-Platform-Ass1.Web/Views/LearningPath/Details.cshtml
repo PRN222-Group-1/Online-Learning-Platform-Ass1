@@ -1,51 +1,143 @@
-@model Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathViewModel
+@model Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathDetailsWithProgressDto
 
 @{
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-lg-8">
-            <h1 class="display-5"><i class="bi bi-signpost-split"></i> @Model.Title</h1>
-            <p class="lead">@Model.Description</p>
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Header -->
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Browse" class="text-decoration-none">Learning Paths</a></li>
+                    <li class="breadcrumb-item active">@Model.Title</li>
+                </ol>
+            </nav>
             
-            <h4 class="mt-4 mb-3">Courses Included in this Path</h4>
-            <div class="list-group">
+            <span class="badge bg-primary bg-opacity-10 text-primary mb-2">
+                @Model.TotalCourses Courses
+            </span>
+            <h1 class="display-6 fw-bold mb-3">@Model.Title</h1>
+            <p class="lead text-muted">@Model.Description</p>
+        </div>
+
+        <!-- Enrollment Status -->
+        @if (Model.IsEnrolled)
+        {
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; border-left: 4px solid #28a745 !important;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 text-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>You're Enrolled
+                        </h5>
+                        <span class="badge bg-success">@Model.ProgressPercentage% Complete</span>
+                    </div>
+                    
+                    <div class="progress mb-3" style="height: 10px; border-radius: 5px;">
+                        <div class="progress-bar bg-success" style="width: @Model.ProgressPercentage%"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                        <span>@Model.CompletedCourses of @Model.TotalCourses courses completed</span>
+                        <span>Started: @Model.EnrolledAt?.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <a asp-action="Progress" asp-route-pathId="@Model.Id" class="btn btn-success">
+                            <i class="bi bi-play-circle me-1"></i>Continue Learning
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Courses List -->
+        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+            <div class="card-header bg-white border-0 p-4">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-list-ol me-2 text-primary"></i>Courses in this Path
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                @{ int index = 1; }
                 @foreach (var course in Model.Courses)
                 {
-                    <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@course.Title</h5>
-                            <small class="text-muted">@course.CategoryName</small>
+                    <div class="p-4 @(index < Model.TotalCourses ? "border-bottom" : "")">
+                        <div class="d-flex gap-3">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold"
+                                     style="width: 40px; height: 40px;">
+                                    @index
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1">@course.Title</h6>
+                                <p class="text-muted small mb-2">@course.Description</p>
+                                <div class="d-flex gap-3 text-muted small">
+                                    <span><i class="bi bi-person me-1"></i>@course.InstructorName</span>
+                                    <span><i class="bi bi-tag me-1"></i>@course.CategoryName</span>
+                                    <span class="fw-bold" style="color: #0056d2;">@course.Price.ToString("C")</span>
+                                </div>
+                            </div>
                         </div>
-                        <p class="mb-1 text-truncate">@course.Description</p>
-                        <small>Instructor: @course.InstructorName</small>
-                    </a>
+                    </div>
+                    index++;
                 }
             </div>
         </div>
+    </div>
 
-        <div class="col-lg-4">
-             <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-primary text-white text-center">
-                    <h5 class="mb-0">Get Full Access</h5>
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="border-radius: 12px; top: 20px;">
+            <div class="card-body p-4">
+                <!-- Price -->
+                <div class="text-center mb-4">
+                    <div class="fs-2 fw-bold" style="color: #0056d2;">@Model.Price.ToString("C")</div>
+                    <p class="text-muted small mb-0">Full access to @Model.TotalCourses courses</p>
                 </div>
-                <div class="card-body">
-                    <h2 class="card-title text-center text-primary mb-3">@Model.Price.ToString("C")</h2>
-                    <p class="text-center text-muted">One-time payment for lifetime access to all @Model.Courses.Count() courses.</p>
-                    <div class="d-grid gap-2">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a asp-controller="Order" asp-action="ConfirmPurchase" asp-route-pathId="@Model.Id" class="btn btn-success btn-lg">Buy Learning Path</a>
-                        }
-                        else
-                        {
-                             <a asp-controller="User" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })" class="btn btn-outline-primary btn-lg">Login to Enroll</a>
-                        }
+
+                <!-- CTA -->
+                @if (Model.IsEnrolled)
+                {
+                    <div class="alert alert-success border-0 text-center mb-4">
+                        <i class="bi bi-check-circle-fill me-1"></i>You own this path
                     </div>
-                </div>
-             </div>
+                    <a asp-action="Progress" asp-route-pathId="@Model.Id" class="btn btn-success w-100 py-3 mb-2">
+                        Continue Learning
+                    </a>
+                }
+                else if (User.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-action="ProcessCheckout" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-primary w-100 py-3 mb-2" style="background: #0056d2; border: none;">
+                            Enroll Now
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="User" asp-action="Login" 
+                       asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })"
+                       class="btn btn-primary w-100 py-3 mb-2" style="background: #0056d2; border: none;">
+                        Login to Enroll
+                    </a>
+                }
+
+                <!-- Features -->
+                <hr class="my-4">
+                <h6 class="fw-bold mb-3">This path includes:</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check text-success me-2"></i>@Model.TotalCourses courses</li>
+                    <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Lifetime access</li>
+                    <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Certificate of completion</li>
+                    <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Learn at your own pace</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

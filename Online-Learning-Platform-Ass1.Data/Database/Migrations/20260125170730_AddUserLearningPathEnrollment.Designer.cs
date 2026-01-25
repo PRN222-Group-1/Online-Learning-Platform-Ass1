@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Learning_Platform_Ass1.Data.Database;
 
@@ -11,9 +12,11 @@ using Online_Learning_Platform_Ass1.Data.Database;
 namespace Online_Learning_Platform_Ass1.Data.Migrations
 {
     [DbContext(typeof(OnlineLearningContext))]
-    partial class OnlineLearningContextModelSnapshot : ModelSnapshot
+    [Migration("20260125170730_AddUserLearningPathEnrollment")]
+    partial class AddUserLearningPathEnrollment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,29 +284,13 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("path_id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid?>("CreatedByUserId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("created_by_user_id");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
-                    b.Property<bool>("IsCustomPath")
-                        .HasColumnType("bit")
-                        .HasColumnName("is_custom_path");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)")
                         .HasColumnName("price");
-
-                    b.Property<Guid?>("SourceAssessmentId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("source_assessment_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -318,8 +305,6 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                         .HasColumnName("title");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Learning_Paths");
                 });
@@ -979,15 +964,6 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Online_Learning_Platform_Ass1.Data.Database.Entities.LearningPath", b =>
-                {
-                    b.HasOne("Online_Learning_Platform_Ass1.Data.Database.Entities.User", "CreatedByUser")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
-
-                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("Online_Learning_Platform_Ass1.Data.Database.Entities.Lesson", b =>

@@ -4,22 +4,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
-using Online_Learning_Platform_Ass1.Service.Hubs;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;
 
-public class OrderCleanupService : BackgroundService
+public class OrderCleanupService<THub> : BackgroundService where THub : Hub
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<OrderCleanupService> _logger;
+    private readonly ILogger<OrderCleanupService<THub>> _logger;
     private readonly IConfiguration _configuration;
-    private readonly IHubContext<OrderHub> _hubContext;
+    private readonly IHubContext<THub> _hubContext;
 
     public OrderCleanupService(
         IServiceScopeFactory scopeFactory,
-        ILogger<OrderCleanupService> logger,
+        ILogger<OrderCleanupService<THub>> logger,
         IConfiguration configuration,
-        IHubContext<OrderHub> hubContext)
+        IHubContext<THub> hubContext)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;

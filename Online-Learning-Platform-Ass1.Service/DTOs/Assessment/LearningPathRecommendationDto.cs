@@ -8,4 +8,8 @@ public class LearningPathRecommendationDto
     public string RecommendationReason { get; set; } = null!;
     public string SkillLevel { get; set; } = null!;
     public List<CourseViewModel> RecommendedCourses { get; set; } = new();
+    
+    // Learning Path info (if this recommendation is for a full path)
+    public Guid? PathId { get; set; }
+    public decimal? PathPrice { get; set; }
 }
