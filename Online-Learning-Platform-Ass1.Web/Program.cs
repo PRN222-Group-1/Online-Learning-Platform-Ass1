@@ -5,9 +5,9 @@ using Online_Learning_Platform_Ass1.Service.DTOs.User;
 using Online_Learning_Platform_Ass1.Service.Services;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 using Online_Learning_Platform_Ass1.Service.Validators.User;
+using Online_Learning_Platform_Ass1.Web.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Globalization;
-using Online_Learning_Platform_Ass1.Service.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -79,7 +79,7 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 builder.Services.AddSignalR();
 
 // Add Background Services
-builder.Services.AddHostedService<OrderCleanupService>();
+builder.Services.AddHostedService<OrderCleanupService<OrderHub>>();
 
 var app = builder.Build();
 
