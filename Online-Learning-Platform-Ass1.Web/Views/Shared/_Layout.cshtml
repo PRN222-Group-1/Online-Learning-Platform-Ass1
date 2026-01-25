@@ -135,65 +135,103 @@
   </div>
 </main>
 
-<!-- Footer (Coursera style) -->
-<footer class="bg-dark text-white pt-5 pb-4">
+<!-- Footer (Modern Coursera-inspired) -->
+<footer class="footer-main">
   <div class="container">
-    <div class="row">
-      <div class="col-lg-3 col-md-6 mb-4">
-        <h5 class="fw-bold mb-3">
-          <i class="bi bi-mortarboard-fill me-1"></i>LearnHub
-        </h5>
-        <p class="text-muted small">
-          Quality online education accessible to everyone. Start learning today and transform your career.
-        </p>
-      </div>
-      
-      <div class="col-lg-2 col-md-6 mb-4">
-        <h6 class="fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Explore</h6>
-        <ul class="list-unstyled">
-          <li class="mb-2"><a href="/" class="text-muted text-decoration-none small">All Courses</a></li>
-          <li class="mb-2"><a href="/LearningPath/Browse" class="text-muted text-decoration-none small">Learning Paths</a></li>
-          <li class="mb-2"><a href="/Assessment/Start" class="text-muted text-decoration-none small">Skill Assessment</a></li>
-        </ul>
-      </div>
-      
-      <div class="col-lg-2 col-md-6 mb-4">
-        <h6 class="fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Community</h6>
-        <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="text-muted text-decoration-none small">Learner Stories</a></li>
-          <li class="mb-2"><a href="#" class="text-muted text-decoration-none small">Partners</a></li>
-          <li class="mb-2"><a href="#" class="text-muted text-decoration-none small">Blog</a></li>
-        </ul>
-      </div>
-      
-      <div class="col-lg-2 col-md-6 mb-4">
-        <h6 class="fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">More</h6>
-        <ul class="list-unstyled">
-          <li class="mb-2"><a href="#" class="text-muted text-decoration-none small">About</a></li>
-          <li class="mb-2"><a href="#" class="text-muted text-decoration-none small">Careers</a></li>
-          <li class="mb-2"><a href="/Home/Privacy" class="text-muted text-decoration-none small">Privacy</a></li>
-        </ul>
-      </div>
-      
-      <div class="col-lg-3 col-md-6 mb-4">
-        <h6 class="fw-bold mb-3 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Connect</h6>
-        <div class="d-flex gap-3">
-          <a href="#" class="text-muted"><i class="bi bi-facebook fs-5"></i></a>
-          <a href="#" class="text-muted"><i class="bi bi-linkedin fs-5"></i></a>
-          <a href="#" class="text-muted"><i class="bi bi-twitter-x fs-5"></i></a>
-          <a href="#" class="text-muted"><i class="bi bi-youtube fs-5"></i></a>
+    <!-- Top Section -->
+    <div class="row g-4 pb-4">
+      <!-- Brand & Description -->
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-brand mb-3">
+          <i class="bi bi-mortarboard-fill"></i>
+          <span>LearnHub</span>
         </div>
+        <p class="footer-description">
+          A high-quality online learning platform that helps you develop skills and advance your career. 
+          Learn anytime, anywhere with courses designed by experts.
+        </p>
+        <div class="footer-social">
+          <a href="https://github.com/PRN222-Group-1/Online-Learning-Platform-Ass1" target="_blank" title="GitHub">
+            <i class="bi bi-github"></i>
+          </a>
+          <a href="#" title="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="#" title="LinkedIn">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="#" title="YouTube">
+            <i class="bi bi-youtube"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6 class="footer-heading">Explore</h6>
+        <ul class="footer-links">
+          <li><a asp-controller="Home" asp-action="Index">All Courses</a></li>
+          <li><a asp-controller="LearningPath" asp-action="Browse">Learning Paths</a></li>
+          <li><a asp-controller="Assessment" asp-action="Start">Skill Assessment</a></li>
+        </ul>
+      </div>
+      
+      <!-- For Learners -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6 class="footer-heading">Learners</h6>
+        <ul class="footer-links">
+          <li><a asp-controller="Course" asp-action="MyCourses">My Courses</a></li>
+          <li><a asp-controller="LearningPath" asp-action="MyPaths">My Paths</a></li>
+          <li><a asp-controller="Order" asp-action="MyOrders">My Orders</a></li>
+        </ul>
+      </div>
+      
+      <!-- About -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6 class="footer-heading">About Us</h6>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Our Team</a></li>
+          <li><a asp-controller="Home" asp-action="Privacy">Privacy Policy</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact -->
+      <div class="col-lg-2 col-md-6 col-6">
+        <h6 class="footer-heading">Contact</h6>
+        <ul class="footer-links footer-contact">
+          <li>
+            <i class="bi bi-envelope"></i>
+            <a href="mailto:support@learnhub.com">support@learnhub.com</a>
+          </li>
+          <li>
+            <i class="bi bi-telephone"></i>
+            <span>1900 1234</span>
+          </li>
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            <span>FPT University, HCM</span>
+          </li>
+        </ul>
       </div>
     </div>
     
-    <hr class="my-4 border-secondary">
+    <!-- Divider -->
+    <hr class="footer-divider">
     
-    <div class="d-flex flex-wrap justify-content-between align-items-center">
-      <p class="text-muted small mb-0">&copy; 2026 LearnHub Inc. All rights reserved.</p>
-      <div class="d-flex gap-3">
-        <a href="#" class="text-muted small text-decoration-none">Terms</a>
-        <a href="#" class="text-muted small text-decoration-none">Privacy</a>
-        <a href="#" class="text-muted small text-decoration-none">Help</a>
+    <!-- Bottom Section -->
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>&copy; 2025 LearnHub - PRN222 Group 1. All rights reserved.</p>
+        <p class="footer-tech">
+          Built with <i class="bi bi-heart-fill text-danger"></i> using 
+          <strong>ASP.NET Core MVC</strong> &bull; <strong>Entity Framework Core</strong> &bull; <strong>SQL Server</strong>
+        </p>
+      </div>
+      <div class="footer-legal">
+        <a href="#">Terms of Service</a>
+        <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+        <a href="#">Help Center</a>
       </div>
     </div>
   </div>
