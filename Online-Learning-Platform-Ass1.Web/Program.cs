@@ -49,6 +49,7 @@ builder.Services.AddDbContext<OnlineLearningContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<ILearningPathRepository, LearningPathRepository>();
+builder.Services.AddScoped<IUserLearningPathEnrollmentRepository, UserLearningPathEnrollmentRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -61,6 +62,8 @@ builder.Services.AddScoped<IUserAssessmentRepository, UserAssessmentRepository>(
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ILearningPathService, LearningPathService>();
+builder.Services.AddScoped<ILearningPathEnrollmentService, LearningPathEnrollmentService>();
+builder.Services.AddScoped<ILearningPathProgressSyncService, LearningPathProgressSyncService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ILessonProgressService, LessonProgressService>();

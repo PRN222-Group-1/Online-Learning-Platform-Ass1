@@ -22,6 +22,7 @@ public class OnlineLearningContext(DbContextOptions<OnlineLearningContext> optio
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<LearningPath> LearningPaths { get; set; }
     public DbSet<PathCourse> PathCourses { get; set; }
+    public DbSet<UserLearningPathEnrollment> UserLearningPathEnrollments { get; set; }
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<AssessmentQuestion> AssessmentQuestions { get; set; }
     public DbSet<AssessmentOption> AssessmentOptions { get; set; }
@@ -49,6 +50,19 @@ public class OnlineLearningContext(DbContextOptions<OnlineLearningContext> optio
             .HasOne(pc => pc.Course)
             .WithMany(c => c.PathCourses)
             .HasForeignKey(pc => pc.CourseId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure UserLearningPathEnrollment
+        modelBuilder.Entity<UserLearningPathEnrollment>()
+            .HasOne(ulpe => ulpe.User)
+            .WithMany(u => u.LearningPathEnrollments)
+            .HasForeignKey(ulpe => ulpe.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserLearningPathEnrollment>()
+            .HasOne(ulpe => ulpe.LearningPath)
+            .WithMany(lp => lp.UserEnrollments)
+            .HasForeignKey(ulpe => ulpe.PathId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Additional configurations (examples based on previous context style)

@@ -1,51 +1,155 @@
-@model Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathViewModel
+@model Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathDetailsWithProgressDto
 
 @{
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <div class="row">
+        <!-- Main Content -->
         <div class="col-lg-8">
-            <h1 class="display-5"><i class="bi bi-signpost-split"></i> @Model.Title</h1>
-            <p class="lead">@Model.Description</p>
-            
-            <h4 class="mt-4 mb-3">Courses Included in this Path</h4>
-            <div class="list-group">
-                @foreach (var course in Model.Courses)
-                {
-                    <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@course.Title</h5>
-                            <small class="text-muted">@course.CategoryName</small>
-                        </div>
-                        <p class="mb-1 text-truncate">@course.Description</p>
-                        <small>Instructor: @course.InstructorName</small>
-                    </a>
-                }
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-             <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-primary text-white text-center">
-                    <h5 class="mb-0">Get Full Access</h5>
+            <div class="card card-modern shadow-sm mb-4">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h1 class="mb-2">@Model.Title</h1>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-0 lead">@Model.Description</p>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <h2 class="card-title text-center text-primary mb-3">@Model.Price.ToString("C")</h2>
-                    <p class="text-center text-muted">One-time payment for lifetime access to all @Model.Courses.Count() courses.</p>
-                    <div class="d-grid gap-2">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a asp-controller="Order" asp-action="ConfirmPurchase" asp-route-pathId="@Model.Id" class="btn btn-success btn-lg">Buy Learning Path</a>
+                    <!-- User Progress (if enrolled) -->
+                    @if (Model.IsEnrolled)
+                    {
+                        <div class="alert alert-success-light mb-4">
+                            <h6 class="mb-3"><i class="bi bi-check-circle"></i> B?n ?ã ??ng ký l? trình này</h6>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">Ti?n ?? h?c t?p</span>
+                                    <span class="badge bg-primary">@Model.ProgressPercentage%</span>
+                                </div>
+                                <div class="progress" style="height: 28px;">
+                                    <div class="progress-bar bg-success progress-bar-striped" 
+                                         role="progressbar" 
+                                         style="width: @(Model.ProgressPercentage)%"
+                                         aria-valuenow="@Model.ProgressPercentage" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        @Model.CompletedCourses / @Model.TotalCourses khóa h?c
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <small class="text-muted d-block">B?t ??u</small>
+                                    <strong>@Model.EnrolledAt?.ToString("dd/MM/yyyy")</strong>
+                                </div>
+                                @if (Model.CompletedAt.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <small class="text-muted d-block">Hoàn thành</small>
+                                        <strong>@Model.CompletedAt.Value.ToString("dd/MM/yyyy")</strong>
+                                    </div>
+                                }
+                            </div>
+
+                            <hr />
+
+                            <div class="d-flex gap-2">
+                                <a asp-controller="LearningPath" asp-action="Progress" asp-route-pathId="@Model.Id" 
+                                   class="btn btn-primary">
+                                    <i class="bi bi-play-circle"></i> Ti?p t?c h?c
+                                </a>
+                                <form asp-controller="LearningPath" asp-action="DropPath" method="post" style="display: inline;">
+                                    <input type="hidden" name="enrollmentId" value="@Model.EnrollmentId" />
+                                    <button type="submit" class="btn btn-outline-danger"
+                                            onclick="return confirm('B?n có ch?c mu?n b? l? trình này?');">
+                                        <i class="bi bi-trash"></i> B? l? trình
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Courses List -->
+                    <h5 class="mt-4 mb-3">
+                        <i class="bi bi-book"></i> Các khóa h?c (@Model.TotalCourses)
+                    </h5>
+
+                    <div class="list-group">
+                        @{
+                            int courseIndex = 1;
                         }
-                        else
+                        @foreach (var course in Model.Courses)
                         {
-                             <a asp-controller="User" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })" class="btn btn-outline-primary btn-lg">Login to Enroll</a>
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            <span class="badge bg-secondary me-2">@courseIndex</span>
+                                            @course.Title
+                                        </h6>
+                                        <p class="mb-1 text-muted small">@course.Description</p>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> @course.InstructorName
+                                            <span class="ms-2">|</span>
+                                            <i class="bi bi-tag ms-2"></i> @course.CategoryName
+                                        </small>
+                                    </div>
+                                    <strong class="text-primary ms-2">@course.Price.ToString("C")</strong>
+                                </div>
+                            </div>
+                            courseIndex++;
                         }
                     </div>
                 </div>
-             </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card card-modern sticky-top shadow-sm" style="top: 20px;">
+                <div class="card-header bg-success text-white text-center">
+                    <h5 class="mb-0">Giá l? trình</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-success mb-3">@Model.Price.ToString("C")</h2>
+                    <p class="text-muted small mb-3">Truy c?p tr?n v?n @Model.TotalCourses khóa h?c</p>
+
+                    @if (Model.IsEnrolled)
+                    {
+                        <div class="alert alert-info-light small">
+                            <i class="bi bi-check-circle"></i> B?n ?ã s? h?u l? trình này
+                        </div>
+                    }
+                    else if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-action="ProcessCheckout" asp-route-id="@Model.Id" method="post">
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-cart-plus"></i> Mua ngay
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="User" asp-action="Login" 
+                           asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })" 
+                           class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-box-arrow-in-right"></i> ??ng nh?p ?? mua
+                        </a>
+                    }
+
+                    <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#courseDetail">
+                        <i class="bi bi-info-circle"></i> Chi ti?t
+                    </button>
+                </div>
+                <div class="card-footer bg-light">
+                    <small class="text-muted d-block text-center">
+                        <i class="bi bi-shield-check"></i> Truy c?p su?t ??i
+                    </small>
+                </div>
+            </div>
         </div>
     </div>
 </div>

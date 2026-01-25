@@ -28,4 +28,7 @@ public class LearningPath
 
     // Many-to-Many with Course via PathCourses
     public ICollection<PathCourse> PathCourses { get; set; } = new List<PathCourse>();
+
+    // One-to-Many with UserLearningPathEnrollment
+    public ICollection<UserLearningPathEnrollment> UserEnrollments { get; set; } = new List<UserLearningPathEnrollment>();
 }

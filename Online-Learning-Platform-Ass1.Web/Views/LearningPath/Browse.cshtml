@@ -1,0 +1,114 @@
+@model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathViewModel>
+
+@{
+    ViewData["Title"] = "Khám phá l? trình h?c";
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-signpost-split-fill"></i> Khám phá l? trình h?c
+                </h1>
+                <p class="lead text-muted">Các l? trình ???c thi?t k? chuyên nghi?p ?? giúp b?n ??t m?c tiêu</p>
+            </div>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            @foreach (var path in Model)
+            {
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card card-modern h-100 shadow-sm hover-shadow-lg transition">
+                        <div class="card-header bg-gradient-primary text-white">
+                            <h5 class="mb-2">@path.Title</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-book"></i> @path.Courses.Count() khóa h?c
+                                </span>
+                                <h4 class="mb-0 text-white">@path.Price.ToString("C")</h4>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(path.Description))
+                            {
+                                <p class="card-text text-muted mb-3">
+                                    @if (path.Description.Length > 150)
+                                    {
+                                        @(path.Description.Substring(0, 150) + "...")
+                                    }
+                                    else
+                                    {
+                                        @path.Description
+                                    }
+                                </p>
+                            }
+
+                            <!-- Courses List -->
+                            <div class="mb-3">
+                                <h6 class="text-muted small mb-2">
+                                    <i class="bi bi-list-check"></i> Các khóa h?c bao g?m:
+                                </h6>
+                                <ul class="list-unstyled">
+                                    @foreach (var course in path.Courses.Take(4))
+                                    {
+                                        <li class="mb-2 small">
+                                            <i class="bi bi-check-circle text-success"></i>
+                                            <span class="ms-2">@course.Title</span>
+                                        </li>
+                                    }
+                                    @if (path.Courses.Count() > 4)
+                                    {
+                                        <li class="text-muted fst-italic small">
+                                            <i class="bi bi-three-dots"></i>
+                                            và @(path.Courses.Count() - 4) khóa h?c khác n?a
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light">
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@path.Id" class="btn btn-primary btn-sm flex-grow-1">
+                                    <i class="bi bi-eye"></i> Xem chi ti?t
+                                </a>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <a asp-action="Checkout" asp-route-id="@path.Id" class="btn btn-success btn-sm">
+                                        <i class="bi bi-cart-plus"></i> Mua
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="User" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = path.Id })" 
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-box-arrow-in-right"></i> ??ng nh?p
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card border-0 shadow-sm text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                        <h4 class="mt-4 mb-2">Không có l? trình</h4>
+                        <p class="text-muted">Hi?n t?i không có l? trình h?c nào. Vui lòng quay l?i sau.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

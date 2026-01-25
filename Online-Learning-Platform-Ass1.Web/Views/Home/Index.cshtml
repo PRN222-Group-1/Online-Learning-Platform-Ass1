@@ -13,6 +13,7 @@
             </div>
             <div class="list-group list-group-flush">
                 <a asp-action="Index" 
+                   asp-route-viewAll="true"
                    class="list-group-item list-group-item-action @(Model.SelectedCategoryId == null ? "active" : "")">
                    <i class="bi bi-collection"></i> All Categories
                 </a>
@@ -73,9 +74,17 @@
         <!-- Featured Courses Section -->
         <div class="section-header scroll-reveal">
             <h3 class="section-title">
-                @if(!string.IsNullOrEmpty(Model.SearchTerm) || Model.SelectedCategoryId.HasValue)
+                @if(!string.IsNullOrEmpty(Model.SearchTerm))
                 {
                     <span><i class="bi bi-search"></i> Search Results</span>
+                }
+                else if(Model.SelectedCategoryId.HasValue)
+                {
+                    <span><i class="bi bi-filter"></i> Category Courses</span>
+                }
+                else if(Model.ViewAll)
+                {
+                    <span><i class="bi bi-collection"></i> All Courses</span>
                 }
                 else
                 {

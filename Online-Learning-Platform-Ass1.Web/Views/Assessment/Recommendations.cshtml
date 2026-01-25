@@ -20,13 +20,41 @@
         {
             <div class="card shadow mb-4">
                 <div class="card-header bg-success text-white">
-                    <h3 class="mb-1">@recommendation.RecommendationTitle</h3>
-                    <p class="mb-0">
-                        <i class="bi bi-info-circle me-2"></i>@recommendation.RecommendationReason
-                        <span class="badge bg-light text-dark ms-3">Trình độ: @recommendation.SkillLevel</span>
-                    </p>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h3 class="mb-1">@recommendation.RecommendationTitle</h3>
+                            <p class="mb-0">
+                                <i class="bi bi-info-circle me-2"></i>@recommendation.RecommendationReason
+                                <span class="badge bg-light text-dark ms-2">Trình độ: @recommendation.SkillLevel</span>
+                            </p>
+                        </div>
+                        @if (recommendation.PathId.HasValue && recommendation.PathPrice.HasValue)
+                        {
+                            <div class="text-end">
+                                <h4 class="text-white mb-0">@recommendation.PathPrice.Value.ToString("C")</h4>
+                                <small>Lộ trình hoàn chỉnh</small>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div class="card-body">
+                    <!-- If this is a path recommendation, show the path info and "Enroll" button -->
+                    @if (recommendation.PathId.HasValue)
+                    {
+                        <div class="alert alert-info-light mb-3">
+                            <i class="bi bi-signpost-split"></i>
+                            <strong>Đây là một lộ trình học hoàn chỉnh</strong> bao gồm @recommendation.RecommendedCourses.Count() khóa học.
+                            <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" class="alert-link ms-2">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Course List -->
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-list-check"></i> Các khóa học bao gồm (@recommendation.RecommendedCourses.Count()):
+                    </h6>
+                    
                     <div class="row">
                         @foreach (var course in recommendation.RecommendedCourses)
                         {
@@ -70,6 +98,34 @@
                         }
                     </div>
                 </div>
+                
+                <!-- Footer with Call-to-Action -->
+                @if (recommendation.PathId.HasValue)
+                {
+                    <div class="card-footer bg-light">
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" 
+                               class="btn btn-success">
+                                <i class="bi bi-eye"></i> Xem lộ trình
+                            </a>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a asp-controller="LearningPath" asp-action="Checkout" asp-route-id="@recommendation.PathId" 
+                                   class="btn btn-primary">
+                                    <i class="bi bi-cart-plus"></i> Mua lộ trình
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="User" asp-action="Login" 
+                                   asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = recommendation.PathId })" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         }
     }

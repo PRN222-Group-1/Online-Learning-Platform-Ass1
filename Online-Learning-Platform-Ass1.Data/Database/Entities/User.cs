@@ -19,4 +19,7 @@ public class User
     public Role? Role { get; set; }
 
     public Profile? Profile { get; set; }
+
+    // One-to-Many with UserLearningPathEnrollment
+    public ICollection<UserLearningPathEnrollment> LearningPathEnrollments { get; set; } = new List<UserLearningPathEnrollment>();
 }

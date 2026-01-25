@@ -1,13 +1,15 @@
 using Online_Learning_Platform_Ass1.Data.Repositories.Interfaces;
 using Online_Learning_Platform_Ass1.Service.DTOs.Assessment;
 using Online_Learning_Platform_Ass1.Service.DTOs.Course;
+using Online_Learning_Platform_Ass1.Service.DTOs.LearningPath;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;
 
 public class LearningPathRecommendationService(
     IUserAssessmentRepository assessmentRepository,
-    ICourseRepository courseRepository) : ILearningPathRecommendationService
+    ICourseRepository courseRepository,
+    ILearningPathRepository learningPathRepository) : ILearningPathRecommendationService
 {
     public async Task<IEnumerable<LearningPathRecommendationDto>> GenerateRecommendationsAsync(Guid assessmentId)
     {
@@ -42,7 +44,8 @@ public class LearningPathRecommendationService(
         var primarySkillLevel = skillLevelCounts.OrderByDescending(kvp => kvp.Value)
             .FirstOrDefault().Key ?? "Beginner";
 
-        // Get all courses
+        // Get all published learning paths
+        var allPaths = await learningPathRepository.GetPublishedPathsAsync();
         var allCourses = await courseRepository.GetAllAsync();
 
         // Generate recommendations based on top categories
@@ -52,59 +55,135 @@ public class LearningPathRecommendationService(
         foreach (var categoryInterest in topCategories)
         {
             var categoryId = categoryInterest.Key;
-            var categoryCourses = allCourses
-                .Where(c => c.CategoryId == categoryId && c.Status == "published")
-                .Take(5)
-                .Select(c => new CourseViewModel
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    Price = c.Price,
-                    ImageUrl = c.ImageUrl,
-                    InstructorName = c.Instructor?.Username ?? "Unknown",
-                    CategoryName = c.Category?.Name ?? "General"
-                })
+            
+            // Try to find learning paths that contain courses in this category
+            var matchingPaths = allPaths
+                .Where(p => p.PathCourses.Any(pc => pc.Course.CategoryId == categoryId))
+                .Take(3)
                 .ToList();
 
-            if (categoryCourses.Any())
+            if (matchingPaths.Any())
             {
-                var categoryName = categoryCourses.First().CategoryName;
-                recommendations.Add(new LearningPathRecommendationDto
+                // Return actual learning paths with their courses
+                foreach (var path in matchingPaths)
                 {
-                    RecommendationTitle = $"Lộ trình {categoryName}",
-                    RecommendationReason = $"Dựa trên sở thích của bạn về {categoryName}",
-                    SkillLevel = primarySkillLevel,
-                    RecommendedCourses = categoryCourses
-                });
+                    var coursesInPath = path.PathCourses
+                        .OrderBy(pc => pc.OrderIndex)
+                        .Select(pc => new CourseViewModel
+                        {
+                            Id = pc.Course.Id,
+                            Title = pc.Course.Title,
+                            Description = pc.Course.Description,
+                            Price = pc.Course.Price,
+                            ImageUrl = pc.Course.ImageUrl,
+                            InstructorName = pc.Course.Instructor?.Username ?? "Unknown",
+                            CategoryName = pc.Course.Category?.Name ?? "General"
+                        })
+                        .ToList();
+
+                    recommendations.Add(new LearningPathRecommendationDto
+                    {
+                        RecommendationTitle = path.Title,
+                        RecommendationReason = $"Lộ trình được đề xuất dựa trên sở thích {path.PathCourses.First().Course.Category?.Name}",
+                        SkillLevel = primarySkillLevel,
+                        RecommendedCourses = coursesInPath,
+                        PathId = path.Id,
+                        PathPrice = path.Price
+                    });
+                }
+            }
+            else
+            {
+                // Fallback: recommend individual courses in this category
+                var categoryCourses = allCourses
+                    .Where(c => c.CategoryId == categoryId && c.Status == "published")
+                    .Take(5)
+                    .Select(c => new CourseViewModel
+                    {
+                        Id = c.Id,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Price = c.Price,
+                        ImageUrl = c.ImageUrl,
+                        InstructorName = c.Instructor?.Username ?? "Unknown",
+                        CategoryName = c.Category?.Name ?? "General"
+                    })
+                    .ToList();
+
+                if (categoryCourses.Any())
+                {
+                    var categoryName = categoryCourses.First().CategoryName;
+                    recommendations.Add(new LearningPathRecommendationDto
+                    {
+                        RecommendationTitle = $"Các khóa học về {categoryName}",
+                        RecommendationReason = $"Dựa trên sở thích của bạn về {categoryName}",
+                        SkillLevel = primarySkillLevel,
+                        RecommendedCourses = categoryCourses
+                    });
+                }
             }
         }
 
-        // If no category-based recommendations, provide general beginner path
+        // If no category-based recommendations, provide general paths or courses
         if (!recommendations.Any())
         {
-            var generalCourses = allCourses
-                .Where(c => c.Status == "published")
-                .Take(5)
-                .Select(c => new CourseViewModel
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    Price = c.Price,
-                    ImageUrl = c.ImageUrl,
-                    InstructorName = c.Instructor?.Username ?? "Unknown",
-                    CategoryName = c.Category?.Name ?? "General"
-                })
-                .ToList();
-
-            recommendations.Add(new LearningPathRecommendationDto
+            // Try featured learning paths first
+            var featuredPaths = await learningPathRepository.GetFeaturedPathsAsync(3);
+            if (featuredPaths.Any())
             {
-                RecommendationTitle = "Lộ trình Khám phá",
-                RecommendationReason = "Các khóa học phổ biến để bắt đầu",
-                SkillLevel = primarySkillLevel,
-                RecommendedCourses = generalCourses
-            });
+                foreach (var path in featuredPaths)
+                {
+                    var coursesInPath = path.PathCourses
+                        .OrderBy(pc => pc.OrderIndex)
+                        .Select(pc => new CourseViewModel
+                        {
+                            Id = pc.Course.Id,
+                            Title = pc.Course.Title,
+                            Description = pc.Course.Description,
+                            Price = pc.Course.Price,
+                            ImageUrl = pc.Course.ImageUrl,
+                            InstructorName = pc.Course.Instructor?.Username ?? "Unknown",
+                            CategoryName = pc.Course.Category?.Name ?? "General"
+                        })
+                        .ToList();
+
+                    recommendations.Add(new LearningPathRecommendationDto
+                    {
+                        RecommendationTitle = path.Title,
+                        RecommendationReason = "Lộ trình phổ biến để bắt đầu",
+                        SkillLevel = primarySkillLevel,
+                        RecommendedCourses = coursesInPath,
+                        PathId = path.Id,
+                        PathPrice = path.Price
+                    });
+                }
+            }
+            else
+            {
+                // Fallback to general courses
+                var generalCourses = allCourses
+                    .Where(c => c.Status == "published")
+                    .Take(5)
+                    .Select(c => new CourseViewModel
+                    {
+                        Id = c.Id,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Price = c.Price,
+                        ImageUrl = c.ImageUrl,
+                        InstructorName = c.Instructor?.Username ?? "Unknown",
+                        CategoryName = c.Category?.Name ?? "General"
+                    })
+                    .ToList();
+
+                recommendations.Add(new LearningPathRecommendationDto
+                {
+                    RecommendationTitle = "Khám phá các khóa học",
+                    RecommendationReason = "Các khóa học phổ biến để bắt đầu",
+                    SkillLevel = primarySkillLevel,
+                    RecommendedCourses = generalCourses
+                });
+            }
         }
 
         return recommendations;
