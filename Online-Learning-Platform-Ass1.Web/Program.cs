@@ -12,12 +12,6 @@ using Online_Learning_Platform_Ass1.Service.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-// ... (skip lines)
-
-builder.Services.AddScoped<IVnPayService, VnPayService>();
-
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 
@@ -80,6 +74,7 @@ builder.Services.AddHttpClient<IChatbotService, ChatbotService>();
 var cultureInfo = new CultureInfo("vi-VN");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
 // Add SignalR
 builder.Services.AddSignalR();
 

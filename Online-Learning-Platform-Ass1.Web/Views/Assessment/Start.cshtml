@@ -13,6 +13,14 @@
                 </div>
             }
             
+            @if (TempData["InfoMessage"] != null)
+            {
+                <div class="alert alert-info alert-dismissible fade show">
+                    <strong>ℹ️ @TempData["InfoMessage"]</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
             <div class="card shadow">
                 <div class="card-body text-center p-5">
                     <h1 class="mb-4">🎯 Đánh giá trình độ của bạn</h1>

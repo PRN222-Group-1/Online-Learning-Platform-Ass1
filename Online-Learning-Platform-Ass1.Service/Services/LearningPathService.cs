@@ -97,6 +97,7 @@ public class LearningPathService(
             result.Add(new UserLearningPathWithProgressDto
             {
                 Id = enrollment.PathId,
+                EnrollmentId = enrollment.Id,
                 Title = enrollment.LearningPath.Title,
                 Description = enrollment.LearningPath.Description,
                 Price = enrollment.LearningPath.Price,
@@ -135,6 +136,7 @@ public class LearningPathService(
         return new UserLearningPathWithProgressDto
         {
             Id = enrollment.PathId,
+            EnrollmentId = enrollment.Id,
             Title = enrollment.LearningPath.Title,
             Description = enrollment.LearningPath.Description,
             Price = enrollment.LearningPath.Price,
