@@ -1,15 +1,15 @@
 @model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.Assessment.LearningPathRecommendationDto>
 
 @{
-    ViewData["Title"] = "Lộ trình học đề xuất";
+    ViewData["Title"] = "Recommended Learning Paths";
 }
 
 <div class="container mt-5">
     <div class="row">
         <div class="col-12">
             <div class="text-center mb-5">
-                <h1>🎉 Lộ trình học được đề xuất cho bạn</h1>
-                <p class="lead text-muted">Dựa trên kết quả đánh giá, đây là những lộ trình học phù hợp nhất</p>
+                <h1><i class="bi bi-stars me-2"></i>Your Recommended Learning Paths</h1>
+                <p class="lead text-muted">Based on your assessment results, here are the most suitable learning paths for you</p>
             </div>
         </div>
     </div>
@@ -25,14 +25,14 @@
                             <h3 class="mb-1">@recommendation.RecommendationTitle</h3>
                             <p class="mb-0">
                                 <i class="bi bi-info-circle me-2"></i>@recommendation.RecommendationReason
-                                <span class="badge bg-light text-dark ms-2">Trình độ: @recommendation.SkillLevel</span>
+                                <span class="badge bg-light text-dark ms-2">Level: @recommendation.SkillLevel</span>
                             </p>
                         </div>
                         @if (recommendation.PathId.HasValue && recommendation.PathPrice.HasValue)
                         {
                             <div class="text-end">
                                 <h4 class="text-white mb-0">@recommendation.PathPrice.Value.ToString("C")</h4>
-                                <small>Lộ trình hoàn chỉnh</small>
+                                <small>Complete Path</small>
                             </div>
                         }
                     </div>
@@ -43,16 +43,16 @@
                     {
                         <div class="alert alert-info-light mb-3">
                             <i class="bi bi-signpost-split"></i>
-                            <strong>Đây là một lộ trình học hoàn chỉnh</strong> bao gồm @recommendation.RecommendedCourses.Count() khóa học.
+                            <strong>This is a complete learning path</strong> containing @recommendation.RecommendedCourses.Count() courses.
                             <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" class="alert-link ms-2">
-                                Xem chi tiết
+                                View Details
                             </a>
                         </div>
                     }
 
                     <!-- Course List -->
                     <h6 class="text-muted mb-3">
-                        <i class="bi bi-list-check"></i> Các khóa học bao gồm (@recommendation.RecommendedCourses.Count()):
+                        <i class="bi bi-list-check"></i> Included Courses (@recommendation.RecommendedCourses.Count()):
                     </h6>
                     
                     <div class="row">
@@ -84,13 +84,13 @@
                                         </p>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="badge bg-primary">@course.CategoryName</span>
-                                            <strong class="text-success">@course.Price.ToString("N0") VNĐ</strong>
+                                            <strong class="text-success">@course.Price.ToString("C")</strong>
                                         </div>
                                         <p class="text-muted small mb-3">
                                             <i class="bi bi-person me-1"></i>@course.InstructorName
                                         </p>
                                         <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary btn-sm w-100">
-                                            Xem chi tiết
+                                            View Details
                                         </a>
                                     </div>
                                 </div>
@@ -106,13 +106,13 @@
                         <div class="d-flex gap-2 justify-content-end">
                             <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" 
                                class="btn btn-success">
-                                <i class="bi bi-eye"></i> Xem lộ trình
+                                <i class="bi bi-eye"></i> View Path
                             </a>
                             @if (User.Identity?.IsAuthenticated == true)
                             {
                                 <a asp-controller="LearningPath" asp-action="Checkout" asp-route-id="@recommendation.PathId" 
                                    class="btn btn-primary">
-                                    <i class="bi bi-cart-plus"></i> Mua lộ trình
+                                    <i class="bi bi-cart-plus"></i> Buy Path
                                 </a>
                             }
                             else
@@ -120,7 +120,7 @@
                                 <a asp-controller="User" asp-action="Login" 
                                    asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = recommendation.PathId })" 
                                    class="btn btn-outline-primary">
-                                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để mua
+                                    <i class="bi bi-box-arrow-in-right"></i> Login to Purchase
                                 </a>
                             }
                         </div>
@@ -132,17 +132,17 @@
     else
     {
         <div class="alert alert-warning text-center">
-            <h4>Không tìm thấy lộ trình phù hợp</h4>
-            <p>Vui lòng thử lại hoặc liên hệ với chúng tôi để được hỗ trợ.</p>
+            <h4>No Matching Paths Found</h4>
+            <p>Please try again or contact us for assistance.</p>
         </div>
     }
 
     <div class="text-center mt-4 mb-5">
         <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">
-            <i class="bi bi-house me-2"></i>Về trang chủ
+            <i class="bi bi-house me-2"></i>Back to Home
         </a>
         <a asp-action="Start" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-repeat me-2"></i>Làm lại đánh giá
+            <i class="bi bi-arrow-repeat me-2"></i>Retake Assessment
         </a>
     </div>
 </div>

@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Đánh giá trình độ";
+    ViewData["Title"] = "Skill Assessment";
 }
 
 <div class="container mt-5">
@@ -8,7 +8,7 @@
             @if (TempData["WelcomeMessage"] != null)
             {
                 <div class="alert alert-success alert-dismissible fade show">
-                    <strong>🎉 @TempData["WelcomeMessage"]</strong>
+                    <strong>@TempData["WelcomeMessage"]</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
@@ -16,28 +16,28 @@
             @if (TempData["InfoMessage"] != null)
             {
                 <div class="alert alert-info alert-dismissible fade show">
-                    <strong>ℹ️ @TempData["InfoMessage"]</strong>
+                    <strong>@TempData["InfoMessage"]</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
             
             <div class="card shadow">
                 <div class="card-body text-center p-5">
-                    <h1 class="mb-4">🎯 Đánh giá trình độ của bạn</h1>
+                    <h1 class="mb-4">Assess Your Skills</h1>
                     <p class="lead mb-4">
-                        Hãy trả lời một số câu hỏi để chúng tôi hiểu rõ hơn về trình độ và sở thích của bạn.
-                        Chúng tôi sẽ đề xuất lộ trình học phù hợp nhất dành cho bạn.
+                        Answer a few questions to help us understand your skill level and preferences.
+                        We'll recommend the most suitable learning paths for you.
                     </p>
                     <div class="mb-4">
                         <i class="bi bi-clock me-2"></i>
-                        <span>Thời gian: ~3 phút</span>
+                        <span>Duration: ~3 minutes</span>
                     </div>
                     <div class="d-flex gap-3 justify-content-center">
                         <a asp-action="Questions" class="btn btn-primary btn-lg px-5">
-                            Bắt đầu đánh giá
+                            Start Assessment
                         </a>
                         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg">
-                            Bỏ qua
+                            Skip
                         </a>
                     </div>
                 </div>

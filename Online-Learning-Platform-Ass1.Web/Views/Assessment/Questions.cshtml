@@ -1,7 +1,7 @@
 @model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.Assessment.AssessmentQuestionDto>
 
 @{
-    ViewData["Title"] = "Câu hỏi đánh giá";
+    ViewData["Title"] = "Assessment Questions";
 }
 
 <div class="container mt-5">
@@ -9,7 +9,7 @@
         <div class="col-md-10">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">📝 Câu hỏi đánh giá</h2>
+                    <h2 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Assessment Questions</h2>
                 </div>
                 <div class="card-body p-4">
                     <form asp-action="Submit" method="post">
@@ -51,7 +51,7 @@
                         <div class="text-center mt-4">
                             <button type="submit" class="btn btn-success btn-lg px-5">
                                 <i class="bi bi-check-circle me-2"></i>
-                                Hoàn thành đánh giá
+                                Complete Assessment
                             </button>
                         </div>
                     </form>

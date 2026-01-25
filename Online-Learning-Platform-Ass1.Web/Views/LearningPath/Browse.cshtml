@@ -1,7 +1,7 @@
 @model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.LearningPathViewModel>
 
 @{
-    ViewData["Title"] = "Khám phá l? trình h?c";
+    ViewData["Title"] = "Browse Learning Paths";
 }
 
 <div class="container mt-5 mb-5">
@@ -9,9 +9,9 @@
         <div class="col-12">
             <div class="text-center mb-5">
                 <h1 class="display-4 fw-bold mb-3">
-                    <i class="bi bi-signpost-split-fill"></i> Khám phá l? trình h?c
+                    <i class="bi bi-signpost-split-fill"></i> Browse Learning Paths
                 </h1>
-                <p class="lead text-muted">Các l? trình ???c thi?t k? chuyên nghi?p ?? giúp b?n ??t m?c tiêu</p>
+                <p class="lead text-muted">Professionally designed paths to help you achieve your goals</p>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
                             <h5 class="mb-2">@path.Title</h5>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="badge bg-light text-dark">
-                                    <i class="bi bi-book"></i> @path.Courses.Count() khóa h?c
+                                    <i class="bi bi-book"></i> @path.Courses.Count() courses
                                 </span>
                                 <h4 class="mb-0 text-white">@path.Price.ToString("C")</h4>
                             </div>
@@ -51,7 +51,7 @@
                             <!-- Courses List -->
                             <div class="mb-3">
                                 <h6 class="text-muted small mb-2">
-                                    <i class="bi bi-list-check"></i> Các khóa h?c bao g?m:
+                                    <i class="bi bi-list-check"></i> Included Courses:
                                 </h6>
                                 <ul class="list-unstyled">
                                     @foreach (var course in path.Courses.Take(4))
@@ -65,7 +65,7 @@
                                     {
                                         <li class="text-muted fst-italic small">
                                             <i class="bi bi-three-dots"></i>
-                                            và @(path.Courses.Count() - 4) khóa h?c khác n?a
+                                            and @(path.Courses.Count() - 4) more courses
                                         </li>
                                     }
                                 </ul>
@@ -75,19 +75,19 @@
                         <div class="card-footer bg-light">
                             <div class="d-flex gap-2">
                                 <a asp-action="Details" asp-route-id="@path.Id" class="btn btn-primary btn-sm flex-grow-1">
-                                    <i class="bi bi-eye"></i> Xem chi ti?t
+                                    <i class="bi bi-eye"></i> View Details
                                 </a>
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
                                     <a asp-action="Checkout" asp-route-id="@path.Id" class="btn btn-success btn-sm">
-                                        <i class="bi bi-cart-plus"></i> Mua
+                                        <i class="bi bi-cart-plus"></i> Buy
                                     </a>
                                 }
                                 else
                                 {
                                     <a asp-controller="User" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = path.Id })" 
                                        class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-box-arrow-in-right"></i> ??ng nh?p
+                                        <i class="bi bi-box-arrow-in-right"></i> Login
                                     </a>
                                 }
                             </div>
@@ -104,8 +104,8 @@
                 <div class="card border-0 shadow-sm text-center py-5">
                     <div class="card-body">
                         <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
-                        <h4 class="mt-4 mb-2">Không có l? trình</h4>
-                        <p class="text-muted">Hi?n t?i không có l? trình h?c nào. Vui lòng quay l?i sau.</p>
+                        <h4 class="mt-4 mb-2">No Learning Paths Available</h4>
+                        <p class="text-muted">There are no learning paths available at the moment. Please check back later.</p>
                     </div>
                 </div>
             </div>

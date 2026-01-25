@@ -84,7 +84,7 @@ public class LearningPathRecommendationService(
                     recommendations.Add(new LearningPathRecommendationDto
                     {
                         RecommendationTitle = path.Title,
-                        RecommendationReason = $"Lộ trình được đề xuất dựa trên sở thích {path.PathCourses.First().Course.Category?.Name}",
+                        RecommendationReason = $"Recommended path based on your interest in {path.PathCourses.First().Course.Category?.Name}",
                         SkillLevel = primarySkillLevel,
                         RecommendedCourses = coursesInPath,
                         PathId = path.Id,
@@ -115,8 +115,8 @@ public class LearningPathRecommendationService(
                     var categoryName = categoryCourses.First().CategoryName;
                     recommendations.Add(new LearningPathRecommendationDto
                     {
-                        RecommendationTitle = $"Các khóa học về {categoryName}",
-                        RecommendationReason = $"Dựa trên sở thích của bạn về {categoryName}",
+                        RecommendationTitle = $"Courses in {categoryName}",
+                        RecommendationReason = $"Based on your interest in {categoryName}",
                         SkillLevel = primarySkillLevel,
                         RecommendedCourses = categoryCourses
                     });
@@ -150,7 +150,7 @@ public class LearningPathRecommendationService(
                     recommendations.Add(new LearningPathRecommendationDto
                     {
                         RecommendationTitle = path.Title,
-                        RecommendationReason = "Lộ trình phổ biến để bắt đầu",
+                        RecommendationReason = "Popular path to get started",
                         SkillLevel = primarySkillLevel,
                         RecommendedCourses = coursesInPath,
                         PathId = path.Id,
@@ -178,8 +178,8 @@ public class LearningPathRecommendationService(
 
                 recommendations.Add(new LearningPathRecommendationDto
                 {
-                    RecommendationTitle = "Khám phá các khóa học",
-                    RecommendationReason = "Các khóa học phổ biến để bắt đầu",
+                    RecommendationTitle = "Explore Our Courses",
+                    RecommendationReason = "Popular courses to get started",
                     SkillLevel = primarySkillLevel,
                     RecommendedCourses = generalCourses
                 });

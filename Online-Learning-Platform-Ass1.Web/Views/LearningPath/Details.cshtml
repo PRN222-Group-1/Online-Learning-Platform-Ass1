@@ -20,12 +20,12 @@
                     @if (Model.IsEnrolled)
                     {
                         <div class="alert alert-success-light mb-4">
-                            <h6 class="mb-3"><i class="bi bi-check-circle"></i> B?n ?ã ??ng ký l? trình này</h6>
+                            <h6 class="mb-3"><i class="bi bi-check-circle"></i> You are enrolled in this path</h6>
 
                             <!-- Progress Bar -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="text-muted small">Ti?n ?? h?c t?p</span>
+                                    <span class="text-muted small">Learning Progress</span>
                                     <span class="badge bg-primary">@Model.ProgressPercentage%</span>
                                 </div>
                                 <div class="progress" style="height: 28px;">
@@ -35,21 +35,21 @@
                                          aria-valuenow="@Model.ProgressPercentage" 
                                          aria-valuemin="0" 
                                          aria-valuemax="100">
-                                        @Model.CompletedCourses / @Model.TotalCourses khóa h?c
+                                        @Model.CompletedCourses / @Model.TotalCourses courses
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block">B?t ??u</small>
-                                    <strong>@Model.EnrolledAt?.ToString("dd/MM/yyyy")</strong>
+                                    <small class="text-muted d-block">Started</small>
+                                    <strong>@Model.EnrolledAt?.ToString("MMM dd, yyyy")</strong>
                                 </div>
                                 @if (Model.CompletedAt.HasValue)
                                 {
                                     <div class="col-md-6">
-                                        <small class="text-muted d-block">Hoàn thành</small>
-                                        <strong>@Model.CompletedAt.Value.ToString("dd/MM/yyyy")</strong>
+                                        <small class="text-muted d-block">Completed</small>
+                                        <strong>@Model.CompletedAt.Value.ToString("MMM dd, yyyy")</strong>
                                     </div>
                                 }
                             </div>
@@ -59,13 +59,13 @@
                             <div class="d-flex gap-2">
                                 <a asp-controller="LearningPath" asp-action="Progress" asp-route-pathId="@Model.Id" 
                                    class="btn btn-primary">
-                                    <i class="bi bi-play-circle"></i> Ti?p t?c h?c
+                                    <i class="bi bi-play-circle"></i> Continue Learning
                                 </a>
                                 <form asp-controller="LearningPath" asp-action="DropPath" method="post" style="display: inline;">
                                     <input type="hidden" name="enrollmentId" value="@Model.EnrollmentId" />
                                     <button type="submit" class="btn btn-outline-danger"
-                                            onclick="return confirm('B?n có ch?c mu?n b? l? trình này?');">
-                                        <i class="bi bi-trash"></i> B? l? trình
+                                            onclick="return confirm('Are you sure you want to drop this learning path?');">
+                                        <i class="bi bi-trash"></i> Drop Path
                                     </button>
                                 </form>
                             </div>
@@ -74,7 +74,7 @@
 
                     <!-- Courses List -->
                     <h5 class="mt-4 mb-3">
-                        <i class="bi bi-book"></i> Các khóa h?c (@Model.TotalCourses)
+                        <i class="bi bi-book"></i> Courses (@Model.TotalCourses)
                     </h5>
 
                     <div class="list-group">
@@ -111,23 +111,23 @@
         <div class="col-lg-4">
             <div class="card card-modern sticky-top shadow-sm" style="top: 20px;">
                 <div class="card-header bg-success text-white text-center">
-                    <h5 class="mb-0">Giá l? trình</h5>
+                    <h5 class="mb-0">Path Price</h5>
                 </div>
                 <div class="card-body text-center">
                     <h2 class="text-success mb-3">@Model.Price.ToString("C")</h2>
-                    <p class="text-muted small mb-3">Truy c?p trên toàn @Model.TotalCourses khóa h?c</p>
+                    <p class="text-muted small mb-3">Access to all @Model.TotalCourses courses</p>
 
                     @if (Model.IsEnrolled)
                     {
                         <div class="alert alert-info-light small">
-                            <i class="bi bi-check-circle"></i> B?n ?ã s? h?u l? trình này
+                            <i class="bi bi-check-circle"></i> You already own this path
                         </div>
                     }
                     else if (User.Identity?.IsAuthenticated == true)
                     {
                         <form asp-action="ProcessCheckout" asp-route-id="@Model.Id" method="post">
                             <button type="submit" class="btn btn-success w-100 mb-2">
-                                <i class="bi bi-cart-plus"></i> Mua ngay
+                                <i class="bi bi-cart-plus"></i> Buy Now
                             </button>
                         </form>
                     }
@@ -136,17 +136,17 @@
                         <a asp-controller="User" asp-action="Login" 
                            asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = Model.Id })" 
                            class="btn btn-primary w-100 mb-2">
-                            <i class="bi bi-box-arrow-in-right"></i> ??ng nh?p ?? mua
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Purchase
                         </a>
                     }
 
                     <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#courseDetail">
-                        <i class="bi bi-info-circle"></i> Chi ti?t
+                        <i class="bi bi-info-circle"></i> Details
                     </button>
                 </div>
                 <div class="card-footer bg-light">
                     <small class="text-muted d-block text-center">
-                        <i class="bi bi-shield-check"></i> Truy c?p su?t ??i
+                        <i class="bi bi-shield-check"></i> Lifetime Access
                     </small>
                 </div>
             </div>
