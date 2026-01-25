@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "My Learning Paths";
+    var customPaths = Model?.Where(p => p.IsCustomPath).ToList() ?? new List<Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.UserLearningPathWithProgressDto>();
+    var standardPaths = Model?.Where(p => !p.IsCustomPath).ToList() ?? new List<Online_Learning_Platform_Ass1.Service.DTOs.LearningPath.UserLearningPathWithProgressDto>();
 }
 
 <div class="container mt-5">
@@ -36,94 +38,37 @@
 
     @if (Model != null && Model.Any())
     {
-        <div class="row">
-            @foreach (var path in Model)
-            {
-                <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="card card-modern h-100 shadow-sm">
-                        <div class="card-header bg-gradient-primary text-white">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="mb-1">@path.Title</h5>
-                                    <small>@path.TotalCourses courses</small>
-                                </div>
-                                <span class="badge bg-light text-dark">@path.EnrollmentStatus</span>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            @if (!string.IsNullOrEmpty(path.Description))
-                            {
-                                <p class="card-text text-muted small mb-3">
-                                    @if (path.Description.Length > 100)
-                                    {
-                                        @(path.Description.Substring(0, 100) + "...")
-                                    }
-                                    else
-                                    {
-                                        @path.Description
-                                    }
-                                </p>
-                            }
-
-                            <!-- Progress Bar -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="text-muted small mb-0">
-                                        <i class="bi bi-bar-chart"></i> Progress
-                                    </label>
-                                    <span class="badge bg-info">@path.ProgressPercentage%</span>
-                                </div>
-                                <div class="progress" style="height: 24px;">
-                                    <div class="progress-bar bg-success" 
-                                         role="progressbar" 
-                                         style="width: @(path.ProgressPercentage)%"
-                                         aria-valuenow="@path.ProgressPercentage" 
-                                         aria-valuemin="0" 
-                                         aria-valuemax="100">
-                                        @path.CompletedCourses / @path.TotalCourses
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Status Info -->
-                            <div class="alert alert-info-light small mb-3">
-                                <i class="bi bi-info-circle"></i>
-                                Completed <strong>@path.CompletedCourses</strong> of <strong>@path.TotalCourses</strong> courses
-                            </div>
-
-                            <!-- Dates -->
-                            <div class="text-muted small mb-3">
-                                <div class="mb-1">
-                                    <i class="bi bi-calendar-event"></i>
-                                    Started: <strong>@path.EnrolledAt.ToString("MMM dd, yyyy")</strong>
-                                </div>
-                                @if (path.CompletedAt.HasValue)
-                                {
-                                    <div>
-                                        <i class="bi bi-check-circle"></i>
-                                        Completed: <strong>@path.CompletedAt.Value.ToString("MMM dd, yyyy")</strong>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light">
-                            <div class="d-flex gap-2">
-                                <a asp-action="Progress" asp-route-pathId="@path.Id" class="btn btn-primary btn-sm flex-grow-1">
-                                    <i class="bi bi-play-circle"></i> Continue Learning
-                                </a>
-                                <form asp-action="DropPath" method="post" style="display: inline;"
-                                      onsubmit="return confirm('Are you sure you want to drop this learning path?');">
-                                    <input type="hidden" name="enrollmentId" value="@path.EnrollmentId" />
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Drop
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+        @if (customPaths.Any())
+        {
+            <div class="mb-4">
+                <h4 class="text-primary mb-3">
+                    <i class="bi bi-magic"></i> Your Personalized Paths
+                    <span class="badge bg-primary">@customPaths.Count</span>
+                </h4>
+                <div class="row">
+                    @foreach (var path in customPaths)
+                    {
+                        <partial name="_PathCard" model="path" />
+                    }
                 </div>
-            }
-        </div>
+            </div>
+        }
+
+        @if (standardPaths.Any())
+        {
+            <div class="mb-4">
+                <h4 class="text-success mb-3">
+                    <i class="bi bi-bookmark-check"></i> Enrolled Paths
+                    <span class="badge bg-success">@standardPaths.Count</span>
+                </h4>
+                <div class="row">
+                    @foreach (var path in standardPaths)
+                    {
+                        <partial name="_PathCard" model="path" />
+                    }
+                </div>
+            </div>
+        }
     }
     else
     {
@@ -133,10 +78,15 @@
                     <div class="card-body">
                         <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
                         <h4 class="mt-4 mb-2">No Learning Paths</h4>
-                        <p class="text-muted mb-4">You haven't enrolled in any learning paths yet. Explore available paths to get started.</p>
-                        <a asp-action="Browse" class="btn btn-primary">
-                            <i class="bi bi-search"></i> Browse Learning Paths
-                        </a>
+                        <p class="text-muted mb-4">You haven't enrolled in any learning paths yet.</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <a asp-controller="Assessment" asp-action="Start" class="btn btn-primary">
+                                <i class="bi bi-clipboard-check"></i> Take Assessment
+                            </a>
+                            <a asp-action="Browse" class="btn btn-outline-success">
+                                <i class="bi bi-search"></i> Browse Paths
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

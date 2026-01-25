@@ -8,7 +8,10 @@ public interface ILearningPathRepository
     Task<IEnumerable<LearningPath>> GetAllAsync();
     Task<IEnumerable<LearningPath>> GetPublishedPathsAsync();
     Task<IEnumerable<LearningPath>> GetFeaturedPathsAsync(int count = 5);
+    Task<IEnumerable<LearningPath>> GetUserCustomPathsAsync(Guid userId);
+    Task<LearningPath?> GetByAssessmentIdAsync(Guid assessmentId);
     Task AddAsync(LearningPath path);
+    Task AddPathCourseAsync(PathCourse pathCourse);
     Task UpdateAsync(LearningPath path);
     Task DeleteAsync(Guid id);
     Task SaveChangesAsync();

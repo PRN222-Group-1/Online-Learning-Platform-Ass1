@@ -13,6 +13,7 @@ public record UserLearningPathWithProgressDto
     public string? Description { get; init; }
     public decimal Price { get; init; }
     public string Status { get; init; } = "draft";
+    public bool IsCustomPath { get; init; }
     public int TotalCourses { get; init; }
     public int CompletedCourses { get; init; }
     public int ProgressPercentage { get; init; }

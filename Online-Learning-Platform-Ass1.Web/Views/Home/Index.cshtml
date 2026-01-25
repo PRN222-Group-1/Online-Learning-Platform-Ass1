@@ -44,15 +44,19 @@
             <!-- Search Bar -->
             <form method="get" asp-action="Index" class="search-bar-modern mb-4">
                 <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
+                <input type="hidden" name="viewAll" value="@Model.ViewAll" />
                 <div class="input-group">
                     <input type="text" class="form-control form-control-lg" placeholder="Search for courses..." 
                            name="searchTerm" value="@Model.SearchTerm">
                     <button class="btn btn-gradient btn-modern" type="submit">
                         <i class="bi bi-search"></i> Search
                     </button>
-                    @if (!string.IsNullOrEmpty(Model.SearchTerm) || Model.SelectedCategoryId.HasValue)
+                    @if (!string.IsNullOrEmpty(Model.SearchTerm))
                     {
-                         <a asp-action="Index" class="btn btn-outline-secondary btn-modern">
+                         <a asp-action="Index" 
+                            asp-route-categoryId="@Model.SelectedCategoryId"
+                            asp-route-viewAll="@(Model.ViewAll ? "true" : null)"
+                            class="btn btn-outline-secondary btn-modern">
                              <i class="bi bi-x-circle"></i> Clear
                          </a>
                     }

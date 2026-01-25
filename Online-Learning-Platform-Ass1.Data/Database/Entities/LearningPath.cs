@@ -26,6 +26,30 @@ public class LearningPath
     [Column("status")]
     public string Status { get; set; } = "draft";
 
+    /// <summary>
+    /// If set, this is a custom/personalized path created for a specific user from assessment
+    /// </summary>
+    [Column("created_by_user_id")]
+    public Guid? CreatedByUserId { get; set; }
+
+    [ForeignKey(nameof(CreatedByUserId))]
+    public User? CreatedByUser { get; set; }
+
+    /// <summary>
+    /// The assessment that generated this custom path (if applicable)
+    /// </summary>
+    [Column("source_assessment_id")]
+    public Guid? SourceAssessmentId { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    /// <summary>
+    /// True if this is a custom path generated from assessment
+    /// </summary>
+    [Column("is_custom_path")]
+    public bool IsCustomPath { get; set; } = false;
+
     // Many-to-Many with Course via PathCourses
     public ICollection<PathCourse> PathCourses { get; set; } = new List<PathCourse>();
 

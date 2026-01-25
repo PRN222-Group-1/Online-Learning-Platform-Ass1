@@ -1,15 +1,15 @@
 @model IEnumerable<Online_Learning_Platform_Ass1.Service.DTOs.Assessment.LearningPathRecommendationDto>
 
 @{
-    ViewData["Title"] = "Recommended Learning Paths";
+    ViewData["Title"] = "Your Personalized Learning Paths";
 }
 
 <div class="container mt-5">
     <div class="row">
         <div class="col-12">
             <div class="text-center mb-5">
-                <h1><i class="bi bi-stars me-2"></i>Your Recommended Learning Paths</h1>
-                <p class="lead text-muted">Based on your assessment results, here are the most suitable learning paths for you</p>
+                <h1><i class="bi bi-stars me-2"></i>Your Personalized Learning Paths</h1>
+                <p class="lead text-muted">Based on your assessment, we've created custom learning paths just for you!</p>
             </div>
         </div>
     </div>
@@ -18,64 +18,78 @@
     {
         @foreach (var recommendation in Model)
         {
+            var isCustomPath = !recommendation.PathId.HasValue;
+            
             <div class="card shadow mb-4">
-                <div class="card-header bg-success text-white">
+                <div class="card-header @(isCustomPath ? "bg-primary" : "bg-success") text-white">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
+                            <div class="d-flex align-items-center mb-1">
+                                @if (isCustomPath)
+                                {
+                                    <span class="badge bg-warning text-dark me-2">
+                                        <i class="bi bi-magic"></i> Custom Path
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-success me-2">
+                                        <i class="bi bi-bookmark-check"></i> Pre-built Path
+                                    </span>
+                                }
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-bar-chart"></i> @recommendation.SkillLevel
+                                </span>
+                            </div>
                             <h3 class="mb-1">@recommendation.RecommendationTitle</h3>
-                            <p class="mb-0">
+                            <p class="mb-0 opacity-75">
                                 <i class="bi bi-info-circle me-2"></i>@recommendation.RecommendationReason
-                                <span class="badge bg-light text-dark ms-2">Level: @recommendation.SkillLevel</span>
                             </p>
                         </div>
-                        @if (recommendation.PathId.HasValue && recommendation.PathPrice.HasValue)
+                        @if (recommendation.PathPrice.HasValue)
                         {
                             <div class="text-end">
                                 <h4 class="text-white mb-0">@recommendation.PathPrice.Value.ToString("C")</h4>
-                                <small>Complete Path</small>
+                                <small>@(isCustomPath ? "Bundle Price (15% off)" : "Complete Path")</small>
                             </div>
                         }
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- If this is a path recommendation, show the path info and "Enroll" button -->
-                    @if (recommendation.PathId.HasValue)
-                    {
-                        <div class="alert alert-info-light mb-3">
-                            <i class="bi bi-signpost-split"></i>
-                            <strong>This is a complete learning path</strong> containing @recommendation.RecommendedCourses.Count() courses.
-                            <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" class="alert-link ms-2">
-                                View Details
-                            </a>
-                        </div>
-                    }
-
-                    <!-- Course List -->
+                    <!-- Course List with Order -->
                     <h6 class="text-muted mb-3">
-                        <i class="bi bi-list-check"></i> Included Courses (@recommendation.RecommendedCourses.Count()):
+                        <i class="bi bi-list-ol"></i> Learning Path (@recommendation.RecommendedCourses.Count courses):
                     </h6>
                     
                     <div class="row">
+                        @{ int courseNum = 1; }
                         @foreach (var course in recommendation.RecommendedCourses)
                         {
                             <div class="col-md-6 col-lg-4 mb-4">
-                                <div class="card h-100 border">
+                                <div class="card h-100 border position-relative">
+                                    <!-- Course Order Badge -->
+                                    <div class="position-absolute top-0 start-0 m-2">
+                                        <span class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; line-height: 22px;">
+                                            @courseNum
+                                        </span>
+                                    </div>
+                                    
                                     @if (!string.IsNullOrEmpty(course.ImageUrl))
                                     {
-                                        <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" style="height: 200px; object-fit: cover;">
+                                        <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" style="height: 150px; object-fit: cover;">
                                     }
                                     else
                                     {
-                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-                                            <i class="bi bi-book" style="font-size: 3rem;"></i>
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 150px;">
+                                            <i class="bi bi-book" style="font-size: 2.5rem;"></i>
                                         </div>
                                     }
                                     <div class="card-body">
-                                        <h5 class="card-title">@course.Title</h5>
-                                        <p class="card-text text-muted small">
-                                            @if (course.Description != null && course.Description.Length > 100)
+                                        <h6 class="card-title fw-bold">@course.Title</h6>
+                                        <p class="card-text text-muted small mb-2">
+                                            @if (course.Description != null && course.Description.Length > 80)
                                             {
-                                                @(course.Description.Substring(0, 100) + "...")
+                                                @(course.Description.Substring(0, 80) + "...")
                                             }
                                             else
                                             {
@@ -84,48 +98,69 @@
                                         </p>
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="badge bg-primary">@course.CategoryName</span>
-                                            <strong class="text-success">@course.Price.ToString("C")</strong>
+                                            <strong class="text-success small">@course.Price.ToString("C")</strong>
                                         </div>
-                                        <p class="text-muted small mb-3">
+                                        <p class="text-muted small mb-2">
                                             <i class="bi bi-person me-1"></i>@course.InstructorName
                                         </p>
-                                        <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary btn-sm w-100">
+                                        <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id" 
+                                           class="btn btn-outline-primary btn-sm w-100">
                                             View Details
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                            courseNum++;
                         }
                     </div>
                 </div>
                 
                 <!-- Footer with Call-to-Action -->
-                @if (recommendation.PathId.HasValue)
-                {
-                    <div class="card-footer bg-light">
-                        <div class="d-flex gap-2 justify-content-end">
-                            <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" 
-                               class="btn btn-success">
-                                <i class="bi bi-eye"></i> View Path
-                            </a>
-                            @if (User.Identity?.IsAuthenticated == true)
+                <div class="card-footer bg-light">
+                    <div class="d-flex gap-2 justify-content-between align-items-center flex-wrap">
+                        <div>
+                            @if (isCustomPath)
                             {
-                                <a asp-controller="LearningPath" asp-action="Checkout" asp-route-id="@recommendation.PathId" 
-                                   class="btn btn-primary">
-                                    <i class="bi bi-cart-plus"></i> Buy Path
+                                <span class="text-muted">
+                                    <i class="bi bi-gift"></i> 
+                                    Save @((recommendation.RecommendedCourses.Sum(c => c.Price) - (recommendation.PathPrice ?? 0)).ToString("C")) with this bundle!
+                                </span>
+                            }
+                        </div>
+                        <div class="d-flex gap-2">
+                            @if (recommendation.PathId.HasValue)
+                            {
+                                <a asp-controller="LearningPath" asp-action="Details" asp-route-id="@recommendation.PathId" 
+                                   class="btn btn-success">
+                                    <i class="bi bi-eye"></i> View Path
                                 </a>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <a asp-controller="LearningPath" asp-action="Checkout" asp-route-id="@recommendation.PathId" 
+                                       class="btn btn-primary">
+                                        <i class="bi bi-cart-plus"></i> Buy Path
+                                    </a>
+                                }
                             }
                             else
                             {
+                                @* For custom paths, user can buy individual courses *@
+                                <span class="text-muted me-2">
+                                    <i class="bi bi-info-circle"></i> Purchase courses individually to start
+                                </span>
+                            }
+                            
+                            @if (User.Identity?.IsAuthenticated != true)
+                            {
                                 <a asp-controller="User" asp-action="Login" 
-                                   asp-route-returnUrl="@Url.Action("Details", "LearningPath", new { id = recommendation.PathId })" 
+                                   asp-route-returnUrl="@Url.Action("Recommendations", "Assessment", new { assessmentId = ViewBag.AssessmentId })" 
                                    class="btn btn-outline-primary">
                                     <i class="bi bi-box-arrow-in-right"></i> Login to Purchase
                                 </a>
                             }
                         </div>
                     </div>
-                }
+                </div>
             </div>
         }
     }
@@ -133,13 +168,16 @@
     {
         <div class="alert alert-warning text-center">
             <h4>No Matching Paths Found</h4>
-            <p>Please try again or contact us for assistance.</p>
+            <p>We couldn't generate personalized recommendations. Please try the assessment again or browse our courses.</p>
         </div>
     }
 
     <div class="text-center mt-4 mb-5">
         <a asp-controller="Home" asp-action="Index" class="btn btn-secondary me-2">
-            <i class="bi bi-house me-2"></i>Back to Home
+            <i class="bi bi-house me-2"></i>Browse All Courses
+        </a>
+        <a asp-controller="LearningPath" asp-action="Browse" class="btn btn-success me-2">
+            <i class="bi bi-signpost-split me-2"></i>View All Paths
         </a>
         <a asp-action="Start" class="btn btn-outline-primary">
             <i class="bi bi-arrow-repeat me-2"></i>Retake Assessment
