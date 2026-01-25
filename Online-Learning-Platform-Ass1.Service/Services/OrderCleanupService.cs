@@ -29,10 +29,10 @@ public class OrderCleanupService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("🚀 Order Cleanup Service started");
+        _logger.LogInformation(" Order Cleanup Service started");
 
         // Get interval from config (default 1 minute for testing)
-        var intervalMinutes = _configuration.GetValue<int>("OrderCleanup:IntervalMinutes", 1);
+        var intervalMinutes = _configuration.GetValue<int>("OrderCleanup:IntervalMinutes", 15);
         
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -41,7 +41,7 @@ public class OrderCleanupService : BackgroundService
                 await CleanupExpiredOrders(stoppingToken);
                 
                 // Wait before next cleanup
-                _logger.LogInformation("⏰ Next cleanup in {Minutes} minute(s)", intervalMinutes);
+                _logger.LogInformation(" Next cleanup in {Minutes} minute(s)", intervalMinutes);
                 await Task.Delay(TimeSpan.FromMinutes(intervalMinutes), stoppingToken);
             }
             catch (OperationCanceledException)
@@ -52,13 +52,13 @@ public class OrderCleanupService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "❌ Error in Order Cleanup Service");
+                _logger.LogError(ex, " Error in Order Cleanup Service");
                 // Wait 1 minute before retry on error
                 await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
 
-        _logger.LogInformation("🛑 Order Cleanup Service stopped");
+        _logger.LogInformation(" Order Cleanup Service stopped");
     }
 
     private async Task CleanupExpiredOrders(CancellationToken cancellationToken)
@@ -66,13 +66,13 @@ public class OrderCleanupService : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var orderRepository = scope.ServiceProvider.GetRequiredService<IOrderRepository>();
 
-        _logger.LogInformation("🔍 Checking for expired orders...");
+        _logger.LogInformation(" Checking for expired orders...");
 
         var expiredOrders = await orderRepository.GetExpiredPendingOrdersAsync();
 
         if (!expiredOrders.Any())
         {
-            _logger.LogInformation("✅ No expired orders found");
+            _logger.LogInformation(" No expired orders found");
             return;
         }
 
@@ -83,7 +83,7 @@ public class OrderCleanupService : BackgroundService
             order.Status = "expired";
             expiredOrderIds.Add(order.Id);
             _logger.LogWarning(
-                "⏱️ Expired order {OrderId} for user {UserId} (created: {CreatedAt}, expired: {ExpiresAt})",
+                " Expired order {OrderId} for user {UserId} (created: {CreatedAt}, expired: {ExpiresAt})",
                 order.Id,
                 order.UserId,
                 order.CreatedAt,
@@ -93,11 +93,11 @@ public class OrderCleanupService : BackgroundService
         await orderRepository.SaveChangesAsync();
         
         _logger.LogInformation(
-            "🧹 Cleaned up {Count} expired order(s)", 
+            " Cleaned up {Count} expired order(s)", 
             expiredOrders.Count());
 
         // Push SignalR notification to all connected clients
         await _hubContext.Clients.All.SendAsync("OrdersExpired", expiredOrderIds, cancellationToken);
-        _logger.LogInformation("📡 Sent SignalR notification for {Count} expired orders", expiredOrderIds.Count);
+        _logger.LogInformation(" Sent SignalR notification for {Count} expired orders", expiredOrderIds.Count);
     }
 }

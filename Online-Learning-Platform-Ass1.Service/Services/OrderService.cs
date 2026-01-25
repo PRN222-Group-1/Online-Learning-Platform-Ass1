@@ -35,38 +35,45 @@ public class OrderService(
             var path = await learningPathRepository.GetByIdAsync(dto.PathId.Value);
             if (path == null) return null;
 
-            // Check if already enrolled in ALL courses of the path (meaning "Joined Path")
-            // Assuming PathCourses is loaded. If not, we might need to load it. 
-            // Based on existing ProcessPaymentAsync using path.PathCourses, we assume it is loaded or available.
-            // Check if user is enrolled in any course of the path? Or all?
-            // "Already joined path" -> Usually means enrolled in the path logic. 
-            // Since we don't have PathEnrollment table, we check if user owns all courses?
-            // Or typically, check if they own the first one?
-            // Let's check if they own ALL.
+            // Get all courses in the path
+            var pathCourses = path.PathCourses?.Select(pc => pc.Course).ToList() ?? new List<Data.Database.Entities.Course>();
             
-            bool alreadyOwnedAll = true;
-            if (path.PathCourses != null && path.PathCourses.Any())
+            if (!pathCourses.Any())
             {
-                foreach (var pc in path.PathCourses)
+                return null; // Path has no courses
+            }
+
+            // Check which courses user already owns and calculate discount
+            decimal ownedCoursesPrice = 0;
+            bool alreadyOwnedAll = true;
+            
+            foreach (var course in pathCourses)
+            {
+                if (await enrollmentRepository.IsEnrolledAsync(userId, course.Id))
                 {
-                    if (!await enrollmentRepository.IsEnrolledAsync(userId, pc.CourseId))
-                    {
-                        alreadyOwnedAll = false;
-                        break;
-                    }
+                    ownedCoursesPrice += course.Price;
+                }
+                else
+                {
+                    alreadyOwnedAll = false;
                 }
             }
-            else 
+
+            // Block purchase if user owns all courses
+            if (alreadyOwnedAll)
             {
-                 alreadyOwnedAll = false; // Empty path? Validation?
+                return null; // User already owns all courses in this path
             }
 
-            if (alreadyOwnedAll && path.PathCourses != null && path.PathCourses.Any())
+            // Calculate adjusted price: Path price - Owned courses price
+            amount = path.Price - ownedCoursesPrice;
+
+            // If adjusted price is <= 0, block purchase
+            if (amount <= 0)
             {
-                return null; // Already enrolled in the path
+                return null; // Discount exceeds path price
             }
 
-            amount = path.Price;
             title = path.Title;
         }
         else
@@ -84,7 +91,7 @@ public class OrderService(
             TotalAmount = amount,
             Status = "pending",
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddMinutes(1) // Order expires in 1 minute (for testing)
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15)
         };
 
         await orderRepository.AddAsync(order);
@@ -98,6 +105,121 @@ public class OrderService(
             Amount = order.TotalAmount,
             Status = order.Status
         };
+    }
+
+    public async Task<OrderPreviewDto?> GetOrderPreviewAsync(Guid userId, CreateOrderDto dto)
+    {
+        if (!dto.CourseId.HasValue && !dto.PathId.HasValue)
+        {
+            return null;
+        }
+
+        if (dto.CourseId.HasValue)
+        {
+            // Single course preview
+            var course = await courseRepository.GetByIdAsync(dto.CourseId.Value);
+            if (course == null) return null;
+
+            // Check if already enrolled
+            if (await enrollmentRepository.IsEnrolledAsync(userId, dto.CourseId.Value))
+            {
+                return new OrderPreviewDto
+                {
+                    CourseId = dto.CourseId,
+                    ItemTitle = course.Title,
+                    ItemType = "Course",
+                    OriginalPrice = course.Price,
+                    FinalPrice = course.Price,
+                    CanPurchase = false,
+                    BlockReason = "You already own this course"
+                };
+            }
+
+            return new OrderPreviewDto
+            {
+                CourseId = dto.CourseId,
+                ItemTitle = course.Title,
+                ItemType = "Course",
+                OriginalPrice = course.Price,
+                FinalPrice = course.Price,
+                CanPurchase = true
+            };
+        }
+        else
+        {
+            // Learning Path preview
+            var path = await learningPathRepository.GetByIdAsync(dto.PathId!.Value);
+            if (path == null) return null;
+
+            var pathCourses = path.PathCourses?.Select(pc => pc.Course).ToList() ?? new List<Data.Database.Entities.Course>();
+            
+            if (!pathCourses.Any())
+            {
+                return new OrderPreviewDto
+                {
+                    PathId = dto.PathId,
+                    ItemTitle = path.Title,
+                    ItemType = "Learning Path",
+                    OriginalPrice = path.Price,
+                    FinalPrice = path.Price,
+                    CanPurchase = false,
+                    BlockReason = "This learning path has no courses"
+                };
+            }
+
+            // Check owned courses and calculate discount
+            var ownedCourses = new List<OwnedCourseDto>();
+            decimal totalDiscount = 0;
+            bool alreadyOwnedAll = true;
+
+            foreach (var course in pathCourses)
+            {
+                if (await enrollmentRepository.IsEnrolledAsync(userId, course.Id))
+                {
+                    ownedCourses.Add(new OwnedCourseDto
+                    {
+                        CourseId = course.Id,
+                        Title = course.Title,
+                        Price = course.Price
+                    });
+                    totalDiscount += course.Price;
+                }
+                else
+                {
+                    alreadyOwnedAll = false;
+                }
+            }
+
+            var finalPrice = path.Price - totalDiscount;
+
+            // Determine if can purchase
+            bool canPurchase = true;
+            string? blockReason = null;
+
+            if (alreadyOwnedAll)
+            {
+                canPurchase = false;
+                blockReason = "You already own all courses in this learning path";
+            }
+            else if (finalPrice <= 0)
+            {
+                canPurchase = false;
+                blockReason = "The discount exceeds the path price. Please contact support.";
+            }
+
+            return new OrderPreviewDto
+            {
+                PathId = dto.PathId,
+                ItemTitle = path.Title,
+                ItemType = "Learning Path",
+                OriginalPrice = path.Price,
+                OwnedCourses = ownedCourses,
+                TotalDiscount = totalDiscount,
+                FinalPrice = finalPrice,
+                CanPurchase = canPurchase,
+                BlockReason = blockReason
+            };
+        }
     }
 
     public async Task<OrderViewModel?> GetOrderByIdAsync(Guid orderId)
@@ -245,6 +367,13 @@ public class OrderService(
 
             int? minutesRemaining = null;
             bool canContinuePayment = false;
+            
+            // Calculate display status - show expired immediately even if DB not updated yet
+            var displayStatus = order.Status;
+            if (order.Status == "pending" && order.ExpiresAt.HasValue && order.ExpiresAt.Value < now)
+            {
+                displayStatus = "expired";
+            }
 
             if (order.Status == "pending" && order.ExpiresAt.HasValue)
             {
@@ -264,7 +393,7 @@ public class OrderService(
                 ItemTitle = itemTitle,
                 ItemType = itemType,
                 Amount = order.TotalAmount,
-                Status = order.Status,
+                Status = displayStatus, // Use calculated status instead of DB status
                 CreatedAt = order.CreatedAt,
                 ExpiresAt = order.ExpiresAt,
                 MinutesRemaining = minutesRemaining,
