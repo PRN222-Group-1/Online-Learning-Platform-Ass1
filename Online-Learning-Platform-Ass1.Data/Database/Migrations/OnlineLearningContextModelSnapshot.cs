@@ -284,14 +284,6 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("progress_id");
 
-                    b.Property<string>("AiSummary")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ai_summary");
-
-                    b.Property<int>("AiSummaryStatus")
-                        .HasColumnType("int")
-                        .HasColumnName("ai_summary_status");
-
                     b.Property<Guid>("EnrollmentId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("enrollment_id");
@@ -307,10 +299,6 @@ namespace Online_Learning_Platform_Ass1.Data.Migrations
                     b.Property<Guid>("LessonId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("lesson_id");
-
-                    b.Property<string>("Transcript")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("transcript");
 
                     b.HasKey("Id");
 

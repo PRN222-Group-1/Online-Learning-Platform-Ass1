@@ -8,13 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Online-Learning-Platform-Ass1.Data\Online-Learning-Platform-Ass1.Data.csproj" />
+        <ProjectReference Include="..\Online-Learning-Platform-Ass1.Data\Online-Learning-Platform-Ass1.Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="BCrypt.Net-Next" />
-        <PackageReference Include="FluentValidation" />
-        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="BCrypt.Net-Next"/>
+        <PackageReference Include="FluentValidation"/>
     </ItemGroup>
 
 </Project>

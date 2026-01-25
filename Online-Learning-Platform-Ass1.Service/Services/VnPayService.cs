@@ -8,9 +8,14 @@ using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Service.Services;
 
-public class VnPayService (IConfiguration configuration) : IVnPayService
+public class VnPayService : IVnPayService
 {
-    private readonly IConfiguration _configuration = configuration;
+    private readonly IConfiguration _configuration;
+
+    public VnPayService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
 
     public string CreatePaymentUrl(string ipAddress, VnPayRequestModel model)
     {
