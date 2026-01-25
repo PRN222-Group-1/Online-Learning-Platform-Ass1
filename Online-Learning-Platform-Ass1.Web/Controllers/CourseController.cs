@@ -1,10 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Online_Learning_Platform_Ass1.Service.DTOs.Course;
 using Online_Learning_Platform_Ass1.Service.DTOs.Lesson;
 using Online_Learning_Platform_Ass1.Service.DTOs.Order;
-using Online_Learning_Platform_Ass1.Service.Services;
 using Online_Learning_Platform_Ass1.Service.Services.Interfaces;
 
 namespace Online_Learning_Platform_Ass1.Data.Controllers;
@@ -13,7 +10,7 @@ namespace Online_Learning_Platform_Ass1.Data.Controllers;
 public class CourseController(
     ICourseService courseService,
     IOrderService orderService,
-    IAiLessonService aiLessonService) : Controller
+    IAiLessonService aiLessonService, ILessonProgressService lessonProgressService) : Controller
 {
     [AllowAnonymous]
     public async Task<IActionResult> Details(Guid id)
@@ -132,5 +129,35 @@ public class CourseController(
 
         return Ok(result);
     }
+
+    //Cập nhật tiến độ bài học
+    [HttpPost]
+    public async Task<IActionResult> UpdateVideoProgress(Guid enrollmentId, Guid lessonId, int currentTime, int duration)
+    {
+        var isCompleted = duration > 0 && currentTime >= duration * 0.9;
+
+        await lessonProgressService.UpdateProgressAsync(
+            enrollmentId,
+            lessonId,
+            currentTime,
+            isCompleted
+        );
+
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> MarkLessonCompleted(Guid enrollmentId, Guid lessonId)
+    {
+        await lessonProgressService.UpdateProgressAsync(
+            enrollmentId,
+            lessonId,
+            watchedSeconds: 0,
+            isCompleted: true
+        );
+
+        return Ok();
+    }
+
 
 }
